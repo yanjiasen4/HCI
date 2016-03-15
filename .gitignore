@@ -2,10 +2,10 @@
 ## Latex
 #################
 
-.aux
-.log
-.gz
-.bak
+*.aux
+*.log
+*.gz
+*.bak
 
 #################
 ## Eclipse

@@ -9,14 +9,15 @@
 \author{杨铭 - 5130379022\\
         李晟 - 5130379017\\
         张云翔 - 5130379012}
-\title{HCI 课程选题提交\\\textbf{Cubeat}}
+\title{HCI 课程选题提交\\\textbf{Cubeat\\
+基于LeapMotion的手势识别音乐游戏}}
 \begin{document}
 \maketitle
 \tableofcontents
 \newpage
-\section{Cubeat —— 项目简述}
+\section{概况}
 \paragraph{手势+节拍}
-\paragraph{}Cubeat是一款基于LeapMotion的音乐节拍游戏。通过LeapMotion对玩家的手部动作进行追踪，完成玩家在游戏内“魔方”上的各种操作，契合音乐节拍。
+\paragraph{}Cubeat是一款基于LeapMotion的音乐节拍游戏。通过LeapMotion（下文将详细介绍）对玩家的手部动作进行追踪，完成玩家在游戏内“魔方”上的各种操作，契合音乐节拍。
 \begin{figure}[!h]
 \begin{minipage}{0.5\linewidth}
   \includegraphics[width=18em]{pic1.png}\\
@@ -37,9 +38,11 @@
 \paragraph{}
 为了调查市场，我们组制作了一份调查问卷，主要针对青少年和大学生群体进行了调查。
 \paragraph{对音乐游戏的熟悉程度}
-\begin{figure}[h]
+\paragraph{}
+我们首先针对大家对音乐游戏的了解程度做了调查
+\begin{figure}[H]
   \centering
-  \includegraphics[width=25em]{chart1.png}\\
+  \includegraphics[width=22em]{chart1.png}\\
   \caption{您之前玩过音乐游戏吗}\label{2-1}
 \end{figure}
 \paragraph{}
@@ -73,7 +76,7 @@
 所以Cubeat也顺应了游戏市场的方向。
 \paragraph{是否愿意尝试Cubeat类的游戏}
 \paragraph{}
-个人认为游戏的实际效果需要玩过才能知道，不易描述，所以本调查结果仅供参考
+由于实际游戏效果很难用文字或者图片描述，所以本调查结果仅供参考
 \begin{figure}[H]
   \centering
   \includegraphics[width=22em]{chart5.png}\\
@@ -131,15 +134,39 @@
 \paragraph{}
 \textbf{Lovelive！}\\
 “Lovelive！”，大名鼎鼎的LL是音乐娱乐公司Lantis的一项大型企划中的音乐游戏，在多个平台有多个版本，这里主要介绍的是它在智能手机和平板上发售的版本。游戏本身玩法传承下落式，只不过用圆圈代替了方形的按键，并把水平的“钢琴”变为了一个半弧形。
-\begin{figure}
+\begin{figure}[H]
   \centering
   \includegraphics[width=24em]{ll.png}\\
   \caption{Lovelive!游戏画面}\label{3-3}
 \end{figure}
 \paragraph{}
-Lovelive！作为较早将音乐游戏和手机游戏流行的“抽卡”、“活动”等元素结合起来的一款游戏，首先在日本获得了超高的人气。但是与其说它的成功是游戏模式
-
+Lovelive！作为较早将音乐游戏和手机游戏流行的“抽卡”、“活动”等元素结合起来的一款游戏，首先在日本获得了超高的人气。但是与其说它的成功是游戏模式，不如说它的成功
+是整个企划的成功，是游戏人物和歌曲的成功。LL以动漫作为载体，用可爱漂亮的游戏人物，吸引了大量动漫爱好者的喜爱，LL粉丝众多，一些粉丝痴迷程度一度被称为“邪教”。所以对于二次元不感冒的人来讲，
+LL可能只是个相貌平平的普通手机游戏
 \paragraph{}
+另一方面，LL作为一款网络手机游戏，继承了一般手机游戏吸引玩家和增加玩家投入时间的方式。高频率的活动，和需要很高的时间精力甚至财力的投入才能获取的活动回报，从某种程度上来讲不是一种很健康的游戏模式\\
+\textbf{比较}
+\begin{description}
+  \item[玩法] 实质上仍旧是下落式，没有什么突破。但是学习了手机游戏的套路，增加了玩家游戏时间。Cubeat在玩法上创新，它的地图编辑器也可以为玩家提供额外的乐趣
+  \item[设定] 与其他音乐游戏不同，Lovelive！拥有完整的人物背景故事设定，丰富的人物和剧情为游戏增加了许多分数。Cubeat不以设定作为最大卖点，这也是众多音乐游戏的选择
+  \item[画面] 主要使用了动漫风格的画面和人物，Cubeat则将使用简洁干净的扁平化风格，让画面显得更加炫酷和前卫
+\end{description}
+\paragraph{立体输入的Cubeat}
+音乐游戏在发展的过程中，不同厂商一直在尝试使用各种办法创新游戏模式，使玩家获得更新的游戏体验。虽然许多不经常玩音乐游戏的用户觉得与真实演奏场景或者太过抽象的操作方式，会使得游戏变得难以操作。
+但事实证明只要设计合理，“模拟乐器”就只是个做音乐游戏的最“navie”的想法。无数音乐游戏探索的道路中，也许更具有立体感的手势输入就是其中之一吧。也许街机游戏也能做到类似的想过，但是它可不能像LeapMotion一样随身携带
+\subsection{需求分析总结}
+\paragraph{}
+总的来说，音乐游戏作为游戏业不小的一个分支，体验玩家不少，但缺少精英玩家，仍旧有较大的市场潜力。而音乐游戏在经过了数十年平稳的发展后，正在和网络、移动端、VR等新时期的元素融合。不同音乐游戏的侧重点也不尽相同。
+Cubeat正式应用了手势输入这个新元素的一款新时期的音游。很多玩家也很希望尝试新鲜的游戏方式，所以会很乐于尝试这款游戏。
+但是硬件设备仍旧是遏制新元素发展的关键因素：许多用户没有LeapMotion等设备，LeapMotion较高的价格......都给我们的推广带来了不小的挑战
+\paragraph{}
+好在当今行业发展迅猛，网络也为我们提供了广阔的渠道。我们可以在一些平台（如LeapMotion App Store）上积累人气，相信相关硬件也会迅速发展。等待技术真正发展普及手势输入，我们的游戏可以做得更好。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=24em]{leapMotionAppStore.png}\\
+  \caption{LeapMotion App Store截图}\label{3-4}
+\end{figure} 
+\newpage
 \section{目标}
 做出有一定游戏性的通过识别手势进行输入的一个音乐游戏。作为一款音乐游戏，应该具有以下特性：
 \begin{description}
@@ -152,15 +179,51 @@ Lovelive！作为较早将音乐游戏和手机游戏流行的“抽卡”、“
 \begin{itemize}
   \item 自带编辑器功能，让玩家也能轻松参与到编铺中来，方便构成玩家社区
   \item 多种基本手势输入法，比如手指点击，滑动，手掌翻动等
-  \item
+  \item 优化LeapMotion的手势输入识别，让玩家更畅快地玩Cubeat
 \end{itemize}
+\paragraph{}
+基础玩法现在设计有两种，即有两种note：用手指戳击魔方的某一个方块，用手指拨动魔方的某一层。
+\begin{figure}[H]
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=24em]{demo.png}\\
+  \caption{demo效果图}\label{4-1}
+\end{figure}
 
 \section{创新点}
-使用手势操作，革新了传统音乐游戏的玩法。
-\section{技术支持}
+\subsection{手势输入}
+\paragraph{}
+\textbf{应用最新的LeapMotion作为手势输入支持}
+LeapMotion（中文名：历动），于2013年2月27日发布。它是一款面向PC和Mac的体感控制器，可以捕捉人类的手部动作。
+经历了三年的成长，它的硬件和软件系统都有了长足的提升。它使用红外线摄像头以超高频率捕捉用户的手部特征，能够准确识别出人体手部的数十个关节，并重绘其三维位置
+\begin{figure}[H]
+\begin{minipage}{0.5\linewidth}
+  \includegraphics[width=15em]{leap.png}\\
+  \caption{LeapMotion实物图}\label{3-1}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+  \includegraphics[width=15em]{leapCompare.png}\\
+  \caption{LeapMotion大小比对}\label{3-2}
+\end{minipage}
+\end{figure}
+\paragraph{}
+LeapMotion本体大小只有$7.8\times2.8\times1.1$，远远比一般的智能手机要小。现在中国售价在400-500元
+\paragraph{}
+使用LeapMotion，实现了我们与其他音乐游戏最大的不同点——手势输入，让玩家脱离键盘、屏幕或是街机的束缚，用双手自由享受音乐游戏的乐趣
+\paragraph{}
+当然，如何让用户玩起来“爽”也是一个艰难的课题。我们前期做了一个demo，感觉LeapMotion精度尚可，只是由于时间紧迫，没有完全实现玩法设计，也没有配合上音乐，没有实质性体验。
+我们将不断调整优化玩法，使得Cubeat的操作更加流畅、体验更加出色。
+\subsection{玩家可编辑图谱}
+\paragraph{}
+开源社区是慢慢流行起来的一种代码管理开发方式，音乐游戏也能做到开源的效果。Cubeat将为玩家提供一个铺面编辑器，能让玩家用自己想用的歌曲随意进行铺面的制作。
+将来如果开发网络支持，提供铺面上传和排行功能，将为游戏提供无穷的可能，也可以建立去一个可发展的游戏社区，游戏社区也将反向支持更多玩家和精英玩家的出现。
+\section{技术支持和分工}
+\subsection{技术}
 \begin{itemize}
   \item Leap Motion硬件支持
   \item 手势识别
   \item 游戏设计方法
 \end{itemize}
+\subsection{分工}
+
 \end{document}

@@ -1,0 +1,13 @@
+################
+## Unity
+################
+Library/
+Temp/
+*.psd
+*.fbx
+*.blend
+*.unity
+*.max
+*.jpeg
+*.jpg
+*.png

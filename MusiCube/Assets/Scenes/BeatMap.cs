@@ -71,6 +71,26 @@ namespace MusiCube
             }
             return false;
         }
+        // Check if nt is a legal note
+        private bool checkNote(Note nt)
+        {
+            switch(nt.dir)
+            {
+                case Direction.xplus:
+                    {
+                        if (nt.id >= 0 && nt.id <= 8)
+                            return true;
+                        break;
+                    }
+                case Direction.zplus:
+                    {
+                        if (nt.id == 3)
+                            break;
+                        break;
+                    }
+            }
+            return false;
+        }
     }
 
     /*
@@ -80,6 +100,7 @@ namespace MusiCube
     public class BeatMap
     {
         public string difficultyName = "";
+        public float fullLength;
         public float ar = 0f;
         public float od = 0f;
 
@@ -213,11 +234,29 @@ namespace MusiCube
     public class Song
     {
         public string songName;
+        public float songLength;
         public BeatMap[] diffs;
 
         public void readSong()
         {
-
+            DirectoryInfo TheFolder = new DirectoryInfo(songName);
+            int diffcount = 0;
+            foreach(FileInfo file in TheFolder.GetFiles())
+            {
+                diffs[diffcount] = new BeatMap();
+                diffs[diffcount].readFromFile(file.FullName);
+            }
+        }
+        public void writeSong()
+        {
+            if (!Directory.Exists(songName))
+            {
+                Directory.CreateDirectory(songName);
+            }
+            foreach(BeatMap bm in diffs)
+            {
+                bm.writeToFile(songName + '/' + bm.difficultyName);
+            }
         }
     }
 }

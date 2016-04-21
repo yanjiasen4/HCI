@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using MusiCube;
+using System;
 
 public class MagiCube : MonoBehaviour
 {
@@ -18,31 +19,51 @@ public class MagiCube : MonoBehaviour
     public Face threeFace;
     BlockStatus[,,] squareBlock = new BlockStatus[3, 3, 3];
     int[,,] blockPos = new int[3,3,3]; // 记录魔方各个位置的当前方块ID
-    float timeCount = 0;
+    public float timeCount = 0;
     int noteCount = 0;
     SortedDictionary<double, List<Note>> notes = new SortedDictionary<double, List<Note>>();
     List<float> timeStamp = new List<float>();
     List<Note> currentNotes = new List<Note>();
     List<Note> nextNotes = new List<Note>();
     bool isOver = false;
-    GameState state;
+    public GameState state;
+    public bool isPaused = false;
+    // 音乐控件
+    public AudioSource music;
+    float musicLength; // ms
 
+    string songName;
     public BeatMap bm;
     // Use this for initialization
+
     void Start()
     {
         Debug.Assert(block != null);
+        music = GetComponent<AudioSource>();
         bm = new BeatMap();
         bm.readFromFile("test.txt");
+        songName = "STYX HELIX - MYTH ＆ ROID [TVsize]";
         InitialSquare();
         InitialNote();
-        Debug.Log(notes[timeStamp[9]]);
-        Debug.Log(timeStamp[9]);
+        LoadMusic();
+        Debug.Assert(music.clip != null);
+        if (state == GameState.Play)
+            music.Play();
+    }
+
+    private void LoadMusic()
+    {
+        Resources.UnloadUnusedAssets();
+        music.clip = Resources.Load("1") as AudioClip;
+        musicLength = music.clip.length;
+        if (music.clip == null) 
+            return;
+        Debug.Log("music: " + songName + "load success\n" + "Length: " + musicLength.ToString());
     }
 
     public int getRandomInt(int min, int max)
     {
-        float num = Random.Range((float)min, (float)max + 1.0f);
+        float num = UnityEngine.Random.Range((float)min, (float)max + 1.0f);
         int ans = (int)num;
         if (ans > max)
         {
@@ -56,6 +77,7 @@ public class MagiCube : MonoBehaviour
     {
         switch(state)
         {
+            // 正常播放，可以从任意时间戳开始
             case GameState.Play:
                 {
                     // update time
@@ -79,14 +101,22 @@ public class MagiCube : MonoBehaviour
                             currentNotes = nextNotes;
                             if (++noteCount >= timeStamp.Count)
                                 return;
-                            Debug.Log(noteCount);
                             nextNotes = notes[timeStamp[noteCount]];
                         }
                     }
                     break;
                 }
+            // 编辑模式，画面静止
             case GameState.Edit:
                 {
+                    if(!isPaused)
+                    {
+                        timeCount += Time.deltaTime;
+                    }
+                    
+                    /*
+                     * [TODO]
+                     */
                     break;
                 }
         }
@@ -153,6 +183,15 @@ public class MagiCube : MonoBehaviour
         */
     }
 
+    public void SetTime(float t)
+    {
+        timeCount = t;
+    }
+    public float GetTime()
+    {
+        return timeCount;
+    }
+
     void InitialSquare()
     {
         Transform blockTrans = block.transform;
@@ -166,6 +205,7 @@ public class MagiCube : MonoBehaviour
                     squareBlock[i, j, k].originalLocation = transform.position + (blockTrans.right * (k - 1) * blockSize) + (blockTrans.forward * (j - 1) * blockSize) + (blockTrans.up * (i - 1) * blockSize);
                     squareBlock[i, j, k].block = (GameObject)Instantiate(block, squareBlock[i, j, k].originalLocation, blockTrans.rotation);
                     squareBlock[i, j, k].block.transform.parent = transform;
+                    squareBlock[i, j, k].block.name = (i * 9 + j * 3 + k).ToString();
                     squareBlock[i, j, k].activeMt = activeMt;
                     squareBlock[i, j, k].inActiveMt = inActiveMt;
                     squareBlock[i, j, k].blockSize = blockSize;
@@ -311,6 +351,11 @@ public class MagiCube : MonoBehaviour
             return;
     }
 
+    public float GetSongLength()
+    {
+        return musicLength;
+    }
+
     public struct BlockIndex
     {
         public int x;
@@ -318,6 +363,8 @@ public class MagiCube : MonoBehaviour
         public int z;
     }
 
+
+    //太影响效率了吧，用3进制把每一位取出来就好了，还有blockpos这个数组有必要吗
     private BlockIndex ID2Index(int id)
     {
         BlockIndex ret = new BlockIndex();
@@ -382,7 +429,7 @@ public class MagiCube : MonoBehaviour
         public faceType third;
         public faceType getRandomFace()
         {
-            float face = Random.Range(0, 3);
+            float face = UnityEngine.Random.Range(0, 3);
             if (face >= 0 && face < 1)
             {
                 return first;

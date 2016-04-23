@@ -21,8 +21,8 @@ public class MapMaker : MonoBehaviour {
         1,2,3,4,6,8,12
     };
 
-    float timeSlice = 0.15f; // default time slice
-    float startTime = 0f;
+    int timeSlice = 150; // default time slice
+    int startTime = 0;
     int sliceCount = 0;
     int maxSlice;
 
@@ -43,16 +43,19 @@ public class MapMaker : MonoBehaviour {
         }
         startTime = mc.bm.GetOffset();
         timeSlice = CalculateTimeSlice();
-        maxSlice = (int)((mc.GetSongLength() - mc.bm.GetOffset()) / timeSlice)+1;
-        print(mc.GetSongLength());
-        print(mc.bm.GetOffset());
-        print(timeSlice);
-        print(maxSlice);
+        maxSlice = (int)((mc.GetSongLength()*1000 - mc.bm.GetOffset()) / timeSlice)+1;
+        //int a = 162;
+        //float b = (float)(a) / 1000;
+        //int c = (int)(b * 1000);
+        //print(a);
+        //print(b);
+        //print(c);
     }
 	
 	// Update is called once per frame
 	void Update () {
         SetUIText();
+        UpdateSliceCount();
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (mc.isPaused)
@@ -88,6 +91,10 @@ public class MapMaker : MonoBehaviour {
             {
                 Debug.Log(hit.collider.name);
                 Debug.DrawLine(ray.origin, hit.point);
+                if(Input.GetKey(KeyCode.X))
+                {
+                    mc.bm.addNote(GetTimeMs(), int.Parse(hit.collider.name), Direction.xminus);
+                }
             }
         }
     }
@@ -101,10 +108,19 @@ public class MapMaker : MonoBehaviour {
     {
         // set timeline
         float t = mc.music.time;
-        tl.value = t;
+        int realTime = (int)System.Math.Ceiling((double)(t*1000));
+        if ((int)realTime % timeSlice != 0)
+            realTime -= 1;
+        t = (float)(realTime) / 1000;
+
+        if (!mc.isPaused)
+        {
+            tl.value = t;
+        }
+       
         int minute = (int)(t) / 60;
         int second = (int)(t) % 60;
-        int millis = (int)(1000 * (t - (int)t));
+        int millis = realTime % 1000;
         timeText.text = minute.ToString() + ":" + second.ToString() + ":" + millis.ToString();
 
         // set divisor
@@ -128,25 +144,9 @@ public class MapMaker : MonoBehaviour {
     }
     */
 
-    public void SetTime(float t)
+    public void SetTimeSlice(float t)
     {
         float currTime = mc.GetTime();
-        print(t);
-        print(currTime);
-        if (t > currTime)
-        {
-            while ((sliceCount+1) * timeSlice < t)
-            {
-                sliceCount++;
-            }
-        }
-        else if(t < currTime)
-        {
-            while(sliceCount * timeSlice > t)
-            {
-                sliceCount--;
-            }
-        }
         mc.SetTime(t);
         // 如果滑条被拖动，设置音乐播放的进度
         if (t > currTime + Time.deltaTime || t < currTime - Time.deltaTime)
@@ -162,32 +162,62 @@ public class MapMaker : MonoBehaviour {
     {
         mc.bm.SetBpm(bpm);
     }
-    float CalculateTimeSlice()
+    int CalculateTimeSlice()
     {
-        return 60 / mc.bm.GetBpm() / beatSnapDivisor;
+        return (int)((60 / mc.bm.GetBpm() / divisorArray[beatSnapDivisor])*1000);
+    }
+    void UpdateSliceCount()
+    {
+        int t = GetTimeMs();
+        int currTime = timeSlice * sliceCount;
+
+        if (t > currTime-1)
+        {
+            while ((sliceCount + 1) * timeSlice < t)
+            {
+                sliceCount++;
+            }
+        }
+        else if (t < currTime-1)
+        {
+            while (sliceCount * timeSlice > t)
+            {
+                sliceCount--;
+            }
+        }
+    }
+    int GetTimeMs()
+    {
+        float t = mc.GetTime();
+        int realTime = (int)System.Math.Ceiling((double)(t * 1000));
+        if ((int)realTime % timeSlice != 0)
+            realTime -= 1;
+        return realTime;
     }
     void beatForward()
     {
-        float t = mc.GetTime();
-        print(sliceCount);
+        int tms = GetTimeMs();
         if (sliceCount + 1 < maxSlice)
         {
             sliceCount++;
         }
-        t = sliceCount * timeSlice;
+        tms = sliceCount * timeSlice;
+        float t = ((float)(tms)) / 1000;
         mc.SetTime(t);
         mc.music.time = t;
+        tl.value = t;
     }
     void beatBack()
     {
-        float t = mc.GetTime();
-        print(sliceCount);
-        if (sliceCount > 0 && t == timeSlice*sliceCount)
+        int tms = GetTimeMs();
+        if (sliceCount > 0 && tms == timeSlice*sliceCount)
         {
             sliceCount--;
         }
-        t = sliceCount * timeSlice;
+        tms = sliceCount * timeSlice;
+        float t = ((float)(tms)) / 1000;
         mc.SetTime(t);
         mc.music.time = t;
+        tl.value = t;
     }
 }

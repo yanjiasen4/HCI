@@ -21,8 +21,8 @@ public class MagiCube : MonoBehaviour
     int[,,] blockPos = new int[3,3,3]; // 记录魔方各个位置的当前方块ID
     public float timeCount = 0;
     int noteCount = 0;
-    SortedDictionary<double, List<Note>> notes = new SortedDictionary<double, List<Note>>();
-    List<float> timeStamp = new List<float>();
+    SortedDictionary<int, List<Note>> notes = new SortedDictionary<int, List<Note>>();
+    List<int> timeStamp = new List<int>();
     List<Note> currentNotes = new List<Note>();
     List<Note> nextNotes = new List<Note>();
     bool isOver = false;
@@ -112,6 +112,7 @@ public class MagiCube : MonoBehaviour
                     if(!isPaused)
                     {
                         timeCount += Time.deltaTime;
+                 
                     }
                     
                     /*
@@ -186,6 +187,10 @@ public class MagiCube : MonoBehaviour
     public void SetTime(float t)
     {
         timeCount = t;
+        int realTime = (int)System.Math.Ceiling((double)(t * 1000));
+        if ((int)realTime % timeSlice != 0)
+            realTime -= 1;
+
     }
     public float GetTime()
     {
@@ -221,7 +226,7 @@ public class MagiCube : MonoBehaviour
     void InitialNote()
     {
         notes = bm.getNotes();
-        foreach(float key in notes.Keys)
+        foreach(int key in notes.Keys)
         {
             timeStamp.Add(key);
         }

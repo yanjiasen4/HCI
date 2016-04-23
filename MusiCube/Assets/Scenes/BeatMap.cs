@@ -26,23 +26,26 @@ namespace MusiCube
         public NoteType type;
         public int id;
         public Direction dir;
-        public double duration; // only Slider's != 0
+        public int duration; // only Slider's != 0
     }
 
     public class TimeLine
     {
         public TimeLine()
         {
-            length = bpm = offset = 0f;
-            notes = new SortedDictionary<double, List<Note>>();
+            length = bpm = 0f;
+            offset = 0;
+            notes = new SortedDictionary<int, List<Note>>();
         }
         public float length;
         public float bpm;
-        public float offset;
+        public int offset; // ms
 
-        public SortedDictionary< double, List<Note> > notes;
+        // key:   offset of notes(ms)
+        // value: list of notes
+        public SortedDictionary< int, List<Note> > notes;
 
-        public bool addNote(double t, Note nt)
+        public bool addNote(int t, Note nt)
         {
             if(notes.ContainsKey(t))
             {
@@ -59,7 +62,7 @@ namespace MusiCube
             }
             return true;
         }
-        public bool deleteNote(double t, Note nt)
+        public bool deleteNote(int t, Note nt)
         {
             if(notes.ContainsKey(t))
             {
@@ -106,7 +109,7 @@ namespace MusiCube
 
         public TimeLine tl = new TimeLine();
 
-        public SortedDictionary<double, List<Note>> getNotes()
+        public SortedDictionary<int, List<Note>> getNotes()
         {
             return tl.notes;
         }
@@ -118,11 +121,11 @@ namespace MusiCube
         {
             tl.bpm = bpm;
         }
-        public float GetOffset()
+        public int GetOffset()
         {
             return tl.offset;
         }
-        public void SetOffset(float offset)
+        public void SetOffset(int offset)
         {
             tl.offset = offset;
         }
@@ -157,11 +160,20 @@ namespace MusiCube
             writer.Close();
         }
 
-        public void addNote(double t, Note nt)
+        public void addNote(int t, int blockID, Direction dir)
+        {
+            Note nt = new Note();
+            nt.type = NoteType.Note;
+            nt.id = blockID;
+            nt.dir = dir;
+            nt.duration = 0;
+            bool r = tl.addNote(t, nt);
+        }
+        public void addNote(int t, Note nt)
         {
             bool r = tl.addNote(t, nt);
         }
-        public void deleteNote(double t, Note nt)
+        public void deleteNote(int t, Note nt)
         {
             bool r = tl.deleteNote(t, nt);
         }
@@ -205,7 +217,7 @@ namespace MusiCube
             ar = float.Parse(parseMapHeadersItem(sr, "ar"));
             od = float.Parse(parseMapHeadersItem(sr, "od"));
             tl.bpm = float.Parse(parseMapHeadersItem(sr, "bpm"));
-            tl.offset = float.Parse(parseMapHeadersItem(sr, "offset"));      
+            tl.offset = int.Parse(parseMapHeadersItem(sr, "offset"));      
         }
         private string parseMapHeadersItem(StreamReader sr, string name)
         {
@@ -224,27 +236,27 @@ namespace MusiCube
         private void parseNote(string[] str)
         {
             Note nt = new Note();
-            float t = float.Parse(str[1]);
+            int t = int.Parse(str[1]);
             if (str[0] == "0") // Note
             {
                 nt.type = NoteType.Note;
                 nt.id = int.Parse(str[2]);
                 nt.dir = (Direction)(int.Parse(str[3]));
-                nt.duration = 0f;
+                nt.duration = 0;
             }
             if(str[0] == "1") // Slider
             {
                 nt.type = NoteType.Slider;
                 nt.id = int.Parse(str[1]);
                 nt.dir = (Direction)(int.Parse(str[3]));
-                nt.duration = float.Parse(str[4]);
+                nt.duration = int.Parse(str[4]);
             }
             if(str[0] == "2") // Plane
             {
                 nt.type = NoteType.Plane;
                 nt.id = int.Parse(str[1]);
                 nt.dir = (Direction)(int.Parse(str[3]));
-                nt.duration = 0f;
+                nt.duration = 0;
             }
             addNote(t, nt);
         }

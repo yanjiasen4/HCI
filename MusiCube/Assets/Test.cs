@@ -16,13 +16,13 @@ public class Test : MonoBehaviour {
             nt.id = getRandomInt(0, 26);
             nt.dir = (Direction)getRandomInt(0, 5);
             nt.duration = 0;
-            bm.addNote(0.5 * i, nt);
+            bm.addNote(500 * i, nt);
         }
         bm.difficultyName = "Easy";
         bm.ar = 8.0f;
         bm.od = 6.5f;
         bm.writeToFile("test.txt");
-        
+        print(getRandomInt(0, 2));
 	}
 	
 	// Update is called once per frame

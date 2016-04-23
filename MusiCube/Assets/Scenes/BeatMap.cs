@@ -33,12 +33,12 @@ namespace MusiCube
     {
         public TimeLine()
         {
-            length = bpm = offset = 0.0;
+            length = bpm = offset = 0f;
             notes = new SortedDictionary<double, List<Note>>();
         }
-        public double length;
-        public double bpm;
-        public double offset;
+        public float length;
+        public float bpm;
+        public float offset;
 
         public SortedDictionary< double, List<Note> > notes;
 
@@ -110,7 +110,22 @@ namespace MusiCube
         {
             return tl.notes;
         }
-
+        public float GetBpm()
+        {
+            return tl.bpm;
+        }
+        public void SetBpm(float bpm)
+        {
+            tl.bpm = bpm;
+        }
+        public float GetOffset()
+        {
+            return tl.offset;
+        }
+        public void SetOffset(float offset)
+        {
+            tl.offset = offset;
+        }
         public void readFromFile(string filename)
         {
             StreamReader reader = new StreamReader(filename);
@@ -163,6 +178,8 @@ namespace MusiCube
             sw.WriteLine("diffname:" + difficultyName);
             sw.WriteLine("ar:" + ar.ToString());
             sw.WriteLine("od:" + od.ToString());
+            sw.WriteLine("bpm:" + tl.bpm.ToString());
+            sw.WriteLine("offset:" + tl.offset.ToString());
         }
         // write a single note to file
         private void writeNote(StreamWriter sw, double t, Note nt)
@@ -187,6 +204,8 @@ namespace MusiCube
             difficultyName = parseMapHeadersItem(sr, "diffname");
             ar = float.Parse(parseMapHeadersItem(sr, "ar"));
             od = float.Parse(parseMapHeadersItem(sr, "od"));
+            tl.bpm = float.Parse(parseMapHeadersItem(sr, "bpm"));
+            tl.offset = float.Parse(parseMapHeadersItem(sr, "offset"));      
         }
         private string parseMapHeadersItem(StreamReader sr, string name)
         {

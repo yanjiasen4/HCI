@@ -1,6 +1,8 @@
 diffname:Easy
 ar:0
 od:0
+bpm:123
+offset:0.898
 0,0,0,4
 0,0.5,18,1
 0,1,12,2

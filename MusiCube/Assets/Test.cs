@@ -7,7 +7,7 @@ public class Test : MonoBehaviour {
     public BeatMap bm = new BeatMap();
     // Use this for initialization
     void Start () {
-        /*
+        
         Random.seed = (int)System.DateTime.Now.Ticks;
         for(int i = 0; i < 10; i++)
         {
@@ -22,7 +22,7 @@ public class Test : MonoBehaviour {
         bm.ar = 8.0f;
         bm.od = 6.5f;
         bm.writeToFile("test.txt");
-        */
+        
 	}
 	
 	// Update is called once per frame

@@ -5,15 +5,65 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
+//using DirectionArray = short;
+
+
 namespace MusiCube
 {
+    public enum Axis
+    {
+        x, y, z
+    }
     // 方向
     public enum Direction
     {
-        xplus, xminus,
-        yplus, yminus,
-        zplus, zminus
+        xplus = 0x01, xminus = 0x02,
+        yplus = 0x04, yminus = 0x08,
+        zplus = 0x10, zminus = 0x20,
+        illegal = 0x40
     }
+
+    /* Singleton class: DirectionMap
+     * 帮助查找每一个ID的方块的可弹出方向
+     */
+    public class DirectionMap
+    {
+        public Direction[] dirMap;
+        private DirectionMap()
+        {
+            dirMap = new Direction[26];
+            for (int i = 0; i < 26; i++)
+            {
+                dirMap[i] = 0x0;
+            }
+            int[] xplusBlock  = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+            int[] xminusBlock = { 18, 19, 20, 21, 24 };
+            int[] yplusBlock  = { 0, 1, 2, 9, 10, 11, 18, 19, 20 };
+            int[] yminusBlock = { 6, 7, 8, 15, 24 };
+            int[] zplusBlock  = { 0, 3, 6, 9, 12, 15, 18, 21, 24 };
+            int[] zminusBlock = { 2, 5, 8, 11, 20 };
+            List<int[]> dirArray = new List<int[]>();
+            dirArray.Add(xplusBlock);
+            dirArray.Add(xminusBlock);
+            dirArray.Add(yplusBlock);
+            dirArray.Add(yminusBlock);
+            dirArray.Add(zplusBlock);
+            dirArray.Add(zminusBlock);
+            Direction currDir = Direction.xplus;
+            for (int i = 0; i < 6; i++)
+            {
+                int[] dirBlock = dirArray[i];
+                foreach(int k in dirBlock)
+                {
+                    dirMap[k] |= currDir;
+                }
+                currDir = (Direction)((int)currDir << 1);
+            }
+        }
+        public static readonly DirectionMap instance = new DirectionMap();
+        
+    }
+
     // 基础的三种玩法
     public enum NoteType
     {
@@ -28,6 +78,7 @@ namespace MusiCube
         public Direction dir;
         public int duration; // only Slider's != 0
     }
+
 
     public class TimeLine
     {
@@ -160,14 +211,34 @@ namespace MusiCube
             writer.Close();
         }
 
-        public void addNote(int t, int blockID, Direction dir)
+        public bool addNote(int t, int blockID, Axis a)
         {
             Note nt = new Note();
             nt.type = NoteType.Note;
             nt.id = blockID;
+            Direction dirs = DirectionMap.instance.dirMap[blockID];
+            Direction dir = Direction.illegal;
+            switch (a)
+            {
+                case Axis.x:
+                    dir = dirs & (Direction.xplus | Direction.xminus);  
+                    break;
+                case Axis.y:
+                    dir = dirs & (Direction.yplus | Direction.yminus);
+                    break;
+                case Axis.z:
+                    dir = dirs & (Direction.zplus | Direction.zminus);
+                    break;
+                default:
+                    break;
+            }
+            if (dir == Direction.illegal)
+                return false;
             nt.dir = dir;
             nt.duration = 0;
+            PrintNote(nt);
             bool r = tl.addNote(t, nt);
+            return r;
         }
         public void addNote(int t, Note nt)
         {
@@ -260,22 +331,40 @@ namespace MusiCube
             }
             addNote(t, nt);
         }
+
+        Direction GetNoteDir(int id)
+        {
+            return DirectionMap.instance.dirMap[id];
+        }
+
+        // For debug
+        void PrintNote(Note nt)
+        {
+            Debug.Log(nt.dir);
+        }
     }
 
     public class Song
     {
         public string songName;
         public float songLength;
+        public string backgroundFileName;
+        public string audioFileName;
         public BeatMap[] diffs;
 
         public void readSong()
         {
             DirectoryInfo TheFolder = new DirectoryInfo(songName);
+            readSongInfo();
             int diffcount = 0;
             foreach(FileInfo file in TheFolder.GetFiles())
             {
-                diffs[diffcount] = new BeatMap();
-                diffs[diffcount].readFromFile(file.FullName);
+                if(file.Extension.Equals(".mcb"))
+                {
+                    diffs[diffcount] = new BeatMap();
+                    diffs[diffcount].readFromFile(file.FullName);
+                    diffcount++;
+                }    
             }
         }
         public void writeSong()
@@ -284,10 +373,33 @@ namespace MusiCube
             {
                 Directory.CreateDirectory(songName);
             }
+            writeSongInfo();
             foreach(BeatMap bm in diffs)
             {
-                bm.writeToFile(songName + '/' + bm.difficultyName);
+                bm.writeToFile(songName + '/' + bm.difficultyName + ".mcb");
             }
+        }
+        void readSongInfo()
+        {
+            string songFileName = songName + "/" + songName + ".mci";
+            StreamReader reader = new StreamReader(songFileName);
+            char[] delim = { ',' };
+            songName = reader.ReadLine().Split(delim)[1];
+            songLength = float.Parse(reader.ReadLine().Split(delim)[1]);
+            backgroundFileName = reader.ReadLine().Split(delim)[1];
+            audioFileName = reader.ReadLine().Split(delim)[1];
+            reader.Close();
+        }
+        void writeSongInfo()
+        {
+            string songFileName = songName + "/" + songName + ".mci";
+            FileStream fs = new FileStream(songFileName, FileMode.Create);
+            StreamWriter writer = new StreamWriter(fs);
+            writer.WriteLine("SongName:" + songName);
+            writer.WriteLine("SongLength:" + songLength.ToString());
+            writer.WriteLine("BackgroundFileName:" + backgroundFileName);
+            writer.WriteLine("AudioFileName:" + audioFileName);
+            writer.Close();
         }
     }
 }

@@ -15,6 +15,7 @@ public class MapMaker : MonoBehaviour {
 
     public MagiCube mc;
 
+    // 节拍
     int beatSnapDivisor = 3;
     int[] divisorArray =
     {
@@ -25,6 +26,9 @@ public class MapMaker : MonoBehaviour {
     int startTime = 0;
     int sliceCount = 0;
     int maxSlice;
+
+    bool isSelected = false;
+    int selectedBlockID = 0;
 
     //bool isPlaying = false;
 
@@ -44,12 +48,6 @@ public class MapMaker : MonoBehaviour {
         startTime = mc.bm.GetOffset();
         timeSlice = CalculateTimeSlice();
         maxSlice = (int)((mc.GetSongLength()*1000 - mc.bm.GetOffset()) / timeSlice)+1;
-        //int a = 162;
-        //float b = (float)(a) / 1000;
-        //int c = (int)(b * 1000);
-        //print(a);
-        //print(b);
-        //print(c);
     }
 	
 	// Update is called once per frame
@@ -91,10 +89,46 @@ public class MapMaker : MonoBehaviour {
             {
                 Debug.Log(hit.collider.name);
                 Debug.DrawLine(ray.origin, hit.point);
-                if(Input.GetKey(KeyCode.X))
+                if (isSelected == false)
                 {
-                    mc.bm.addNote(GetTimeMs(), int.Parse(hit.collider.name), Direction.xminus);
+                    isSelected = true;
+                    selectedBlockID = int.Parse(hit.collider.name);
+                    mc.PlayBlockSelectedAnimation(selectedBlockID); 
                 }
+                else
+                {
+                    mc.PlayBlockIdleAnimation(selectedBlockID);
+                    selectedBlockID = int.Parse(hit.collider.name);
+                    mc.PlayBlockSelectedAnimation(selectedBlockID);
+                }
+            }
+            else
+            {
+                isSelected = false;
+                mc.PlayBlockIdleAnimation(selectedBlockID);
+            }
+            print(isSelected);
+        }
+
+        if(isSelected)
+        {
+            if (Input.GetKey(KeyCode.X))
+            {
+                print(selectedBlockID + " x");
+                mc.bm.addNote(GetTimeMs(), selectedBlockID, Axis.x);
+                isSelected = false;
+            }
+            else if (Input.GetKey(KeyCode.Y))
+            {
+                print(selectedBlockID + " y");
+                mc.bm.addNote(GetTimeMs(), selectedBlockID, Axis.y);
+                isSelected = false;
+            }
+            else if (Input.GetKey(KeyCode.Z))
+            {
+                print(selectedBlockID + " z");
+                mc.bm.addNote(GetTimeMs(), selectedBlockID, Axis.z);
+                isSelected = false;
             }
         }
     }

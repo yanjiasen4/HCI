@@ -190,6 +190,9 @@ public class MagiCube : MonoBehaviour
         int realTime = (int)System.Math.Ceiling((double)(t * 1000));
         if ((int)realTime % timeSlice != 0)
             realTime -= 1;
+    }
+    public void UpdateBeatMap()
+    {
 
     }
     public float GetTime()
@@ -275,8 +278,6 @@ public class MagiCube : MonoBehaviour
                 {
                     break;
                 }
-
-
         }
     }
 
@@ -359,6 +360,14 @@ public class MagiCube : MonoBehaviour
     public float GetSongLength()
     {
         return musicLength;
+    }
+    public void PlayBlockSelectedAnimation(int id)
+    {
+        squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<Animator>().Play("Selected", -1, 0f);
+    }
+    public void PlayBlockIdleAnimation(int id)
+    {
+        squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<Animator>().Play("Cancel", -1, 0f);
     }
 
     public struct BlockIndex

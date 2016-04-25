@@ -149,6 +149,8 @@
     <Compile Include="Assets\Scenes\Block.cs" />
     <Compile Include="Assets\Scenes\MagiCube.cs" />
     <Compile Include="Assets\Scenes\MapMaker.cs" />
+    <Compile Include="Assets\Scenes\SelectController.cs" />
+    <Compile Include="Assets\Scenes\SongBar.cs" />
     <Compile Include="Assets\Test.cs" />
   </ItemGroup>
   <ItemGroup>

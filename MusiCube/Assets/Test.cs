@@ -7,22 +7,26 @@ public class Test : MonoBehaviour {
     public BeatMap bm = new BeatMap();
     // Use this for initialization
     void Start () {
-        
-        Random.seed = (int)System.DateTime.Now.Ticks;
-        for(int i = 0; i < 10; i++)
-        {
-            Note nt = new Note();
-            nt.type = NoteType.Note;
-            nt.id = getRandomInt(0, 26);
-            nt.dir = (Direction)getRandomInt(0, 5);
-            nt.duration = 0;
-            bm.addNote(500 * i, nt);
-        }
-        bm.difficultyName = "Easy";
-        bm.ar = 8.0f;
-        bm.od = 6.5f;
-        bm.writeToFile("test.txt");
-        print(getRandomInt(0, 2));
+
+        /*   Random.seed = (int)System.DateTime.Now.Ticks;
+           for(int i = 0; i < 10; i++)
+           {
+               Note nt = new Note();
+               nt.type = NoteType.Note;
+               nt.id = getRandomInt(0, 26);
+               nt.dir = (Direction)getRandomInt(0, 5);
+               nt.duration = 0;
+               bm.addNote(500 * i, nt);
+           }
+           bm.difficultyName = "Easy";
+           bm.ar = 8.0f;
+           bm.od = 6.5f;
+           bm.writeToFile("test.txt");
+           print(getRandomInt(0, 2));*/
+        Song song = new Song("111");
+        song.writeSong();
+        SongList sl = SongList.instance;
+        //sl.printAllSongs();
 	}
 	
 	// Update is called once per frame

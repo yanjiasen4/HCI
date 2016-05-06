@@ -32,8 +32,15 @@ public class MagiCube : MonoBehaviour
     public AudioSource music;
     float musicLength; // ms
 
+    // 帮助加载音乐
+    WWW www;
+    public bool isDone = false;
+
     string songName;
+    string songFullPathAndName;
+    string beatmapFullPathAndName;
     public BeatMap bm;
+
     // Use this for initialization
 
     void Start()
@@ -42,23 +49,30 @@ public class MagiCube : MonoBehaviour
         music = GetComponent<AudioSource>();
         bm = new BeatMap();
         bm.readFromFile("test.txt");
-        songName = "STYX HELIX - MYTH ＆ ROID [TVsize]";
+        songName = "STYX HELIX";
         InitialSquare();
         InitialNote();
-        LoadMusic();
-        Debug.Assert(music.clip != null);
-        if (state == GameState.Play)
-            music.Play();
+        StartCoroutine(LoadMusic());
     }
 
-    private void LoadMusic()
+    // Use WWW to asynchronously load a music resource
+    IEnumerator LoadMusic()
     {
-        Resources.UnloadUnusedAssets();
-        music.clip = Resources.Load("1") as AudioClip;
+        string songPath = "Songs/" + songName + "/" + songName + ".ogg";
+        string beatmapPath = "Songs/" + songName + "/" + songName + ".mcb";
+        songFullPathAndName = "file:///" + System.IO.Path.Combine(Application.streamingAssetsPath, songPath);
+        beatmapFullPathAndName = System.IO.Path.Combine(Application.streamingAssetsPath, beatmapPath);
+
+        www = new WWW(songFullPathAndName);
+        yield return www;
+
+        music.clip= www.GetAudioClip(true, true);
         musicLength = music.clip.length;
-        if (music.clip == null) 
-            return;
         Debug.Log("music: " + songName + "load success\n" + "Length: " + musicLength.ToString());
+
+        if (state == GameState.Play)
+            music.Play();
+        isDone = true;
     }
 
     public int getRandomInt(int min, int max)
@@ -111,7 +125,7 @@ public class MagiCube : MonoBehaviour
                 {
                     if(!isPaused)
                     {
-                        timeCount += Time.deltaTime;
+                       // timeCount += Time.deltaTime;
                  
                     }
                     
@@ -121,11 +135,6 @@ public class MagiCube : MonoBehaviour
                     break;
                 }
         }
-
-       
-
-
-
 
         /*
         timeCount += Time.deltaTime;
@@ -248,6 +257,7 @@ public class MagiCube : MonoBehaviour
 
     public void ClickSquare(int x, int y, int z)
     {
+        PlayerPrefs.SetInt("index", 1);
         /*
         BlockStatus blockSt = squareBlock[y, z, x];
         if (blockSt.status == BlockStatus.state.active)
@@ -370,6 +380,12 @@ public class MagiCube : MonoBehaviour
         squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<Animator>().Play("Cancel", -1, 0f);
     }
 
+    public void saveBeatMap()
+    {
+        if (songFullPathAndName != null)
+            bm.writeToFile(beatmapFullPathAndName);
+    }
+
     public struct BlockIndex
     {
         public int x;
@@ -400,6 +416,7 @@ public class MagiCube : MonoBehaviour
         }
         return ret;
     }
+    
 
     class BlockStatus
     {

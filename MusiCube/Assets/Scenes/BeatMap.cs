@@ -10,6 +10,7 @@ using System.Text;
 
 namespace MusiCube
 {
+
     public enum Axis
     {
         x, y, z
@@ -60,8 +61,7 @@ namespace MusiCube
                 currDir = (Direction)((int)currDir << 1);
             }
         }
-        public static readonly DirectionMap instance = new DirectionMap();
-        
+        public static readonly DirectionMap instance = new DirectionMap(); 
     }
 
     // 基础的三种玩法
@@ -79,9 +79,9 @@ namespace MusiCube
         public int duration; // only Slider's != 0
     }
 
-
     public class TimeLine
     {
+        public static int var = 1;
         public TimeLine()
         {
             length = bpm = 0f;
@@ -160,6 +160,10 @@ namespace MusiCube
 
         public TimeLine tl = new TimeLine();
 
+        /* 
+         * public API 
+         */
+        /* Get & Set function */
         public SortedDictionary<int, List<Note>> getNotes()
         {
             return tl.notes;
@@ -180,6 +184,8 @@ namespace MusiCube
         {
             tl.offset = offset;
         }
+
+        /* Read and Write file function */
         public void readFromFile(string filename)
         {
             StreamReader reader = new StreamReader(filename);
@@ -198,7 +204,7 @@ namespace MusiCube
         }
         public void writeToFile(string filename)
         {
-            FileStream fs = new FileStream(filename, FileMode.Create);
+            FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
             StreamWriter writer = new StreamWriter(fs);
             writeMapHeaders(writer);
             foreach (var item in tl.notes)
@@ -211,6 +217,7 @@ namespace MusiCube
             writer.Close();
         }
 
+        /* edit beatmap function */
         public bool addNote(int t, int blockID, Axis a)
         {
             Note nt = new Note();
@@ -332,6 +339,7 @@ namespace MusiCube
             addNote(t, nt);
         }
 
+        // Get legal direction for block which ID is 'id'
         Direction GetNoteDir(int id)
         {
             return DirectionMap.instance.dirMap[id];
@@ -347,14 +355,28 @@ namespace MusiCube
     public class Song
     {
         public string songName;
-        public float songLength;
+       // public float songLength;
         public string backgroundFileName;
         public string audioFileName;
-        public BeatMap[] diffs;
+        public int diffCount;
+        public List<BeatMap> diffs;
+
+        private string songPrefixPath;
+        private string songFullPath;
+
+        public Song(string name)
+        {
+            songName = name;
+            diffs = new List<BeatMap>();
+
+            string songSuffixPath = songName + ".mci";
+            songPrefixPath = Application.streamingAssetsPath + "/Songs/" + songName;
+            songFullPath = System.IO.Path.Combine(songPrefixPath, songSuffixPath);
+        }
 
         public void readSong()
         {
-            DirectoryInfo TheFolder = new DirectoryInfo(songName);
+            DirectoryInfo TheFolder = new DirectoryInfo(songPrefixPath);
             readSongInfo();
             int diffcount = 0;
             foreach(FileInfo file in TheFolder.GetFiles())
@@ -369,37 +391,76 @@ namespace MusiCube
         }
         public void writeSong()
         {
-            if (!Directory.Exists(songName))
+            Debug.Log(songFullPath);
+            if (!Directory.Exists(songPrefixPath))
             {
-                Directory.CreateDirectory(songName);
+                Directory.CreateDirectory(songPrefixPath);
             }
             writeSongInfo();
             foreach(BeatMap bm in diffs)
             {
-                bm.writeToFile(songName + '/' + bm.difficultyName + ".mcb");
+                bm.writeToFile(songFullPath + '/' + bm.difficultyName + ".mcb");
             }
         }
         void readSongInfo()
         {
-            string songFileName = songName + "/" + songName + ".mci";
-            StreamReader reader = new StreamReader(songFileName);
-            char[] delim = { ',' };
+            StreamReader reader = new StreamReader(songFullPath);
+            char[] delim = { ':' };
             songName = reader.ReadLine().Split(delim)[1];
-            songLength = float.Parse(reader.ReadLine().Split(delim)[1]);
+         //   songLength = float.Parse(reader.ReadLine().Split(delim)[1]);
             backgroundFileName = reader.ReadLine().Split(delim)[1];
             audioFileName = reader.ReadLine().Split(delim)[1];
             reader.Close();
         }
         void writeSongInfo()
         {
-            string songFileName = songName + "/" + songName + ".mci";
-            FileStream fs = new FileStream(songFileName, FileMode.Create);
+            FileStream fs = new FileStream(songFullPath, FileMode.Create);
             StreamWriter writer = new StreamWriter(fs);
             writer.WriteLine("SongName:" + songName);
-            writer.WriteLine("SongLength:" + songLength.ToString());
+        //  writer.WriteLine("SongLength:" + songLength.ToString());
             writer.WriteLine("BackgroundFileName:" + backgroundFileName);
             writer.WriteLine("AudioFileName:" + audioFileName);
             writer.Close();
         }
     }
+
+    public class SongList
+    {
+        public List<Song> songList;
+
+        private SongList()
+        {
+            songList = new List<Song>();
+            string songPath = "Songs/";
+            string songFullPath = System.IO.Path.Combine(Application.streamingAssetsPath, songPath);
+            if(!Directory.Exists(songFullPath))
+            {
+                Directory.CreateDirectory(songFullPath);
+            }
+            DirectoryInfo TheFolder = new DirectoryInfo(songFullPath);
+            DirectoryInfo[] songsDir = TheFolder.GetDirectories();
+            foreach(DirectoryInfo song in songsDir)
+            {
+                Song readSong = new Song(song.Name);
+                readSong.readSong();
+                songList.Add(readSong);
+            }
+        }
+
+        public void printAllSongs()
+        {
+            if(songList.Count != 0)
+            {
+                foreach(Song song in songList)
+                {
+                    Debug.Log(song.songName);
+                    Debug.Log(song.audioFileName);
+                    Debug.Log(song.backgroundFileName);
+                }
+            }
+        }
+
+        public static readonly SongList instance = new SongList();
+    }
+
 }

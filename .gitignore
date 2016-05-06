@@ -232,3 +232,6 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+*.prefab
+MusiCube/Assets/MusiCube/Materials/Corner.mat
+*.mat

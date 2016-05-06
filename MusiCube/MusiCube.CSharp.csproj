@@ -61,6 +61,15 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\UnityAssemblies\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+      <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Common">
+      <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms">
       <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
     </Reference>
@@ -145,6 +154,9 @@
     <Compile Include="Assets\LeapMotion\Scripts\VR\LeapVRCameraControl.cs" />
     <Compile Include="Assets\LeapMotion\Scripts\VR\LeapVRTemporalWarping.cs" />
     <Compile Include="Assets\LeapMotion\Scripts\VR\TemporalWarpingStatus.cs" />
+    <Compile Include="Assets\MusiCube\AnimeScript\AnimeResource.cs" />
+    <Compile Include="Assets\MusiCube\AnimeScript\PlaneAnime.cs" />
+    <Compile Include="Assets\MusiCube\AnimeScript\SelectAnime.cs" />
     <Compile Include="Assets\Scenes\BeatMap.cs" />
     <Compile Include="Assets\Scenes\Block.cs" />
     <Compile Include="Assets\Scenes\MagiCube.cs" />
@@ -162,6 +174,8 @@
     <None Include="Assets\LeapMotion\Resources\ThresholdOverlay.shader" />
     <None Include="Assets\LeapMotion\Version.txt" />
     <None Include="Assets\LeapMotion\readme.txt" />
+    <None Include="Assets\MusiCube\Light.shader" />
+    <None Include="Assets\MusiCube\NoLighting.shader" />
     <None Include="Assets\Plugins\donotdelete.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

@@ -195,7 +195,6 @@ public class MapMaker : MonoBehaviour {
 
     public void SetTimeSlice(float t)
     {
-        float currTime = t;
         mc.SetTime(t);
         UpdateSliceCount();
         // // 如果滑条被拖动，设置音乐播放的进度
@@ -203,6 +202,7 @@ public class MapMaker : MonoBehaviour {
         {
             mc.music.time = t;
         }
+        currTime = t;
     }
     public void SetBeatSnapDivisor(float divisor)
     {

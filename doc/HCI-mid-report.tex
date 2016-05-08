@@ -128,8 +128,32 @@ Osu主打的旗号就是免费、自由和玩家互动。游戏本身属于缩�
 与传统音乐游戏相比，MusiCube最大的亮点就在于其革新的交互方式，将输入从原来的二维变成了三维。其次，MusiCube通过图谱编辑器，增加游戏自由度，方便构建游戏社区。
 \section{软件设计}
 \subsection{架构图}
-\paragraph{}
 本软件主要采用Unity3D制作，通过LeapMotion或者键盘鼠标来进行用户交互。软件进入主界面后，可以选择歌曲或是添加歌曲。对每一个歌曲，有两种操作：演出、编辑。每首歌可以有多个难度。
+\begin{figure}[H]
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=20em]{arc.png}\\
+  \caption{}\label{}
+\end{figure}
+\begin{description}
+  \item[Block] 魔方的一个单独方块
+  \item[MagiCube] 整个魔方，包含27个Block，提供许多控制接口
+  \item[MapMaker] 包含魔方，为编辑图谱提供许多接口，并可以根据BPM（每分钟节拍数）划分时间轴
+  \item[SelectMusic] 选歌类，为选歌界面主要元素，可以根据用户输入进入打图或者编辑界面，包含一个SongList
+  \item[SongList] 读取预设目录下所有歌曲文件，并为SelectMusic所使用
+  \item[Song] 一个Song包含多个BeatMap，即多个歌曲难度
+  \item[BeatMap] 一个单独的图谱，是玩家打图的基本单位，主要数据由文件中读取
+\end{description}
+\paragraph{数据格式}
+歌曲和图谱文件放在\textbf{Songs}文件夹内，每一个文件夹是一个单独的\textbf{Song}，每一个\textbf{Song}文件夹内有一个\textbf{mci}文件和若干个\textbf{mcb}文件。其中\textbf{mci}文件记录了这首歌曲的一些信息，每个\textbf{mcb}文件则是一个单独的难度，文件头部记录了此难度的信息，接下来是具体的物件信息。
+\begin{figure}[H]
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=8em]{mci.png}\\
+  \caption{}\label{}
+\end{figure}
+\paragraph{}
+数据部分有多行四列，每一行是一个单独的物件，对应着游戏内的一次需要用户操作的音符。而四列从左到右分别为：物件类型编号、时间戳（毫秒）、方块编号、方向编号
 \subsection{制作难点}
 \paragraph{Unity3D内置音频支持问题}
 由于希望能够用户自制图谱，所以游戏需要从外部读取文件（包括音频文件）。但是经过查询文档和测试发现，Unity3D内置的音频支持在Windows平台下，只能从外部读取\textbf{.ogg}格式的文件。

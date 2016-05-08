@@ -105,7 +105,8 @@ public class MagiCube : MonoBehaviour
                     // render notes
                     else
                     {
-                        if (timeCount >= timeStamp[noteCount])
+                        int timeMs = (int)(timeCount * 1000);
+                        if (timeMs >= timeStamp[noteCount]+bm.GetOffset() - 400)
                         {
                             foreach (Note nt in currentNotes)
                             {
@@ -238,9 +239,11 @@ public class MagiCube : MonoBehaviour
     void InitialNote()
     {
         notes = bm.getNotes();
+        int offset = bm.GetOffset();
         foreach(int key in notes.Keys)
         {
             timeStamp.Add(key);
+            print(key+offset);
         }
         if (notes.Count == 0) // 没有notes
             isOver = true;
@@ -295,65 +298,7 @@ public class MagiCube : MonoBehaviour
     {
         if (nt.type != NoteType.Note)
             return;
-        switch (nt.dir)
-        {
-            case Direction.xminus:
-                {
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = -target.block.transform.right; ;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                }
-            case Direction.xplus:
-                {
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = -block.transform.right; ;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                }
-            case Direction.yminus:
-                {
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = -block.transform.up;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                }
-            case Direction.yplus:
-                {
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = block.transform.up;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                }
-            case Direction.zminus:
-                {
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = -block.transform.forward;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                }
-            case Direction.zplus:
-                {
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = block.transform.forward;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                }
-            default:
-                break;
-        }
+        target.block.GetComponent<SelectAnime>().playPlaneRaise(nt.dir, 0.5f);
     }
     
     private void renderSingleSlider(BlockStatus target, Note nt)
@@ -373,11 +318,11 @@ public class MagiCube : MonoBehaviour
     }
     public void PlayBlockSelectedAnimation(int id)
     {
-        squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<Animator>().Play("Selected", -1, 0f);
+        squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<SelectAnime>().autoPlay(CubeState.select);
     }
     public void PlayBlockIdleAnimation(int id)
     {
-        squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<Animator>().Play("Cancel", -1, 0f);
+        squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<SelectAnime>().autoPlay(CubeState.unSelect);
     }
 
     public void saveBeatMap()

@@ -358,10 +358,10 @@ namespace MusiCube
        // public float songLength;
         public string backgroundFileName;
         public string audioFileName;
-        public int diffCount;
+        public int diffCount = 0;
         public List<BeatMap> diffs;
 
-        private string songPrefixPath;
+        public string songPrefixPath;
         private string songFullPath;
 
         public Song(string name)
@@ -378,14 +378,13 @@ namespace MusiCube
         {
             DirectoryInfo TheFolder = new DirectoryInfo(songPrefixPath);
             readSongInfo();
-            int diffcount = 0;
             foreach(FileInfo file in TheFolder.GetFiles())
             {
                 if(file.Extension.Equals(".mcb"))
                 {
-                    diffs[diffcount] = new BeatMap();
-                    diffs[diffcount].readFromFile(file.FullName);
-                    diffcount++;
+                    diffs.Add(new BeatMap());
+                    diffs[diffCount].readFromFile(file.FullName);
+                    diffCount++;
                 }    
             }
         }
@@ -462,5 +461,5 @@ namespace MusiCube
 
         public static readonly SongList instance = new SongList();
     }
-
+    
 }

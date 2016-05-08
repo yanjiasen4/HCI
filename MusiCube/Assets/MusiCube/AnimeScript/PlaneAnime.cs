@@ -78,7 +78,7 @@ namespace MusiCube
         //缩圈动画
         public void playRaise(float time)
         {
-            
+            //Debug.Log("play");
             if(anime!= PlAnimeType.raise)
             {
                 StateSwitch(PlAnimeType.raise);
@@ -215,7 +215,8 @@ namespace MusiCube
         // Update is called once per frame
         void Update()
         {
-            /*if (anime == PlAnimeType.none)
+            /*
+            if (anime == PlAnimeType.none)
             {
                 playRaise(curTime / testTime);
             }
@@ -265,8 +266,8 @@ namespace MusiCube
                     playRaise(curTime / testTime);
                     return;
                 }
-            }
-            */
+            }*/  
         }
+
     }
 }

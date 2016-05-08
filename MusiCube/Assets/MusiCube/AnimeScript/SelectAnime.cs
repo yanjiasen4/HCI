@@ -16,10 +16,25 @@ namespace MusiCube
         public float totalTime;
         private Color originColor;
         private CubeState state = CubeState.unSelect;
+
+        public GameObject xplusPlane;
+        public GameObject xminusPlane;
+        public GameObject yplusPlane;
+        public GameObject yminusPlane;
+        public GameObject zplusPlane;
+        public GameObject zminusPlane;
         // Use this for initialization
         void Start()
         {
             originColor = corner.GetComponent<MeshRenderer>().material.color;
+            /*
+            xplusPlane = GameObject.Find("Plane3");
+            xminusPlane = GameObject.Find("Plane4");
+            yplusPlane = GameObject.Find("Plane2");
+            yminusPlane = GameObject.Find("Plane0");
+            zplusPlane = GameObject.Find("Plane5");
+            zminusPlane = GameObject.Find("Plane1");
+            */
             //autoPlay(CubeState.select);
         }
 
@@ -75,6 +90,33 @@ namespace MusiCube
                 }
                 curTime += Time.deltaTime;
                 yield return null;
+            }
+        }
+
+        public void playPlaneRaise(MusiCube.Direction dir, float time)
+        {
+            switch(dir)
+            {
+                case Direction.xplus:
+                    xplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.xminus:
+                    xminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.yplus:
+                    yplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.yminus:
+                    yminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.zplus:
+                    zplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.zminus:
+                    zminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                default:
+                    break;
             }
         }
 

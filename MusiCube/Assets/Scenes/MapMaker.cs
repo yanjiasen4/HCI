@@ -22,8 +22,9 @@ public class MapMaker : MonoBehaviour {
         1,2,3,4,6,8,12
     };
 
-    int timeSlice = 150; // default time slice
-    int startTime = 0;
+    float timeSlice = 150f; // default time slice
+    float startTime = 0;
+    float currTime = 0;
     int sliceCount = 0;
     int maxSlice;
 
@@ -35,7 +36,6 @@ public class MapMaker : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         bpmInput.gameObject.SetActive(false);
-       // CreateSong();
         mc = GetComponentInChildren<MagiCube>();
         mc.state = MagiCube.GameState.Edit;
         mc.music.Pause();
@@ -44,8 +44,10 @@ public class MapMaker : MonoBehaviour {
         {
             bpmInput.gameObject.SetActive(true);
         }
-        startTime = mc.bm.GetOffset();
         timeSlice = CalculateTimeSlice();
+        startTime = CalculateStartTime();
+        print(timeSlice);
+        print(startTime);
     }
 
     IEnumerator SetMusic()
@@ -62,7 +64,7 @@ public class MapMaker : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         SetUIText();
-        UpdateSliceCount();
+        //UpdateSliceCount();
         // Music play or pause
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -78,6 +80,11 @@ public class MapMaker : MonoBehaviour {
                 mc.isPaused = true;
                 mc.music.Pause();
             }
+        }
+        
+        if(!mc.isPaused)
+        {
+            currTime += Time.deltaTime;
         }
 
         // go to next slice 
@@ -141,17 +148,17 @@ public class MapMaker : MonoBehaviour {
             if (Input.GetKey(KeyCode.X))
             {
                 print(selectedBlockID + " x");
-                mc.bm.addNote(GetTimeMs(), selectedBlockID, Axis.x);
+                mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.x);
             }
             else if (Input.GetKey(KeyCode.Y))
             {
                 print(selectedBlockID + " y");
-                mc.bm.addNote(GetTimeMs(), selectedBlockID, Axis.y);
+                mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.y);
             }
             else if (Input.GetKey(KeyCode.Z))
             {
                 print(selectedBlockID + " z");
-                mc.bm.addNote(GetTimeMs(), selectedBlockID, Axis.z);
+                mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.z);
             }
         }
     }
@@ -164,7 +171,7 @@ public class MapMaker : MonoBehaviour {
     private void SetUIText()
     {
         // set timeline
-        float t = mc.music.time;
+        float t = currTime;
         int realTime = (int)System.Math.Ceiling((double)(t*1000));
         if ((int)realTime % timeSlice != 0)
             realTime -= 1;
@@ -188,8 +195,9 @@ public class MapMaker : MonoBehaviour {
 
     public void SetTimeSlice(float t)
     {
-        float currTime = mc.GetTime();
+        float currTime = t;
         mc.SetTime(t);
+        UpdateSliceCount();
         // // 如果滑条被拖动，设置音乐播放的进度
         if (t > currTime + Time.deltaTime || t < currTime - Time.deltaTime)
         {
@@ -212,64 +220,84 @@ public class MapMaker : MonoBehaviour {
     {
         mc.bm.SetBpm(bpm);
     }
-    int CalculateTimeSlice()
+    float CalculateTimeSlice()
     {
-        return (int)((60 / mc.bm.GetBpm() / divisorArray[beatSnapDivisor])*1000);
+        return ((60 / mc.bm.GetBpm() / divisorArray[beatSnapDivisor]));
+    }
+    float CalculateStartTime()
+    {
+        float st = (float)(mc.bm.GetOffset())/1000;
+        while(st > timeSlice)
+        {
+            st -= timeSlice;
+        }
+        return st;
     }
     // 由于拖动时间轴滑条，必须时时更新sliceCount参数
     void UpdateSliceCount()
     {
-        int t = GetTimeMs();
-        int currTime = timeSlice * sliceCount;
+        float currSliceTime = timeSlice * sliceCount;
 
-        if (t > currTime-1)
+        if (currTime > currSliceTime)
         {
-            while ((sliceCount + 1) * timeSlice < t)
+            while ((sliceCount + 1) * timeSlice < currTime)
             {
                 sliceCount++;
             }
         }
-        else if (t < currTime-1)
+        else if (currTime < currSliceTime)
         {
-            while (sliceCount * timeSlice > t)
+            while (sliceCount * timeSlice > currTime)
             {
                 sliceCount--;
             }
         }
     }
-    int GetTimeMs()
+    float GetTimeMs()
     {
-        float t = mc.GetTime();
-        // 修复由于音频文件采样精度导致的时间误差
-        int realTime = (int)System.Math.Ceiling((t * 1000));
-        if ((int)realTime % timeSlice != 0)
-            realTime -= 1;
-        return realTime;
+        return currTime * 1000;
+    }
+    int GetTimeMsInt()
+    {
+        return (int)(currTime * 1000);
     }
     void beatForward()
     {
-        int tms = GetTimeMs();
-        print(sliceCount);
-        print(maxSlice);
-        if (sliceCount + 1 < maxSlice)
+        float t = currTime;
+        if(t == 0)
+        {
+            t = startTime;
+        }
+        else if (sliceCount + 1 < maxSlice)
         {
             sliceCount++;
+            t += timeSlice;
         }
-        tms = sliceCount * timeSlice;
-        float t = ((float)(tms)) / 1000;
+        currTime = t;
         mc.SetTime(t);
         mc.music.time = t;
         tl.value = t;
     }
     void beatBack()
     {
-        int tms = GetTimeMs();
-        if (sliceCount > 0 && tms == timeSlice*sliceCount)
+        float t = currTime;
+        print(t);
+        print(sliceCount * timeSlice + startTime);
+        print(t - (sliceCount * timeSlice + startTime));
+        if(t <= startTime)
+        {
+            t = 0;
+        }
+        else if (sliceCount > 0 && t == timeSlice*sliceCount + startTime)
         {
             sliceCount--;
+            t -= timeSlice;
         }
-        tms = sliceCount * timeSlice;
-        float t = ((float)(tms)) / 1000;
+        else
+        {
+            t = timeSlice * sliceCount + startTime;
+        }
+        currTime = t;
         mc.SetTime(t);
         mc.music.time = t;
         tl.value = t;

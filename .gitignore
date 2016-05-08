@@ -237,3 +237,8 @@ MusiCube/Assets/MusiCube/Materials/Corner.mat
 *.mat
 *.unitypackage
 MusiCube/Assets/Doxyfile
+*.dll
+*.mdb
+*.exe
+MusiCube/test_Data
+MusiCube/test_Data/

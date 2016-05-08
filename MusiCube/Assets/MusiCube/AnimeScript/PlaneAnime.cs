@@ -38,9 +38,16 @@ namespace MusiCube
         private GameObject pressLight;
 
 
-        //for test
+        //for auto play anime
         private float curTime = 0;
-        public float testTime = 10; 
+        public float testTime = 10;
+        public float raiseTime = 1;
+        public float sRaiseTime = 1;
+        public float failTime = 0.4f;
+        public float perfectTime = 0.4f;
+        public float goodTime = 0.4f;
+        public float normalTime = 0.4f;
+        private Coroutine curRoutine;
         // Use this for initialization
         void Start()
         {
@@ -60,6 +67,71 @@ namespace MusiCube
             pressLight = Instantiate(AnimeResource.instance.pressLight, transform.position, transform.rotation) as GameObject;
             pressLight.transform.parent = transform;
             pressLight.SetActive(false); 
+        }
+
+        public void autoPlay(PlAnimeType type)
+        {
+            if(curRoutine != null)
+            {
+                StopCoroutine(curRoutine);
+            }
+            curRoutine = StartCoroutine(playCoroutine(type));
+        }
+
+        IEnumerator playCoroutine(PlAnimeType type)
+        {
+            curTime = 0;
+            switch (type)
+            {
+                case PlAnimeType.raise:
+                    while (curTime < raiseTime)
+                    {
+                        playRaise(curTime / raiseTime);
+                        curTime += Time.deltaTime;
+                        yield return null;
+                    }
+                    break;
+                case PlAnimeType.silentRaise:
+                    while (curTime < sRaiseTime)
+                    {
+                        playSilentRaise(curTime / sRaiseTime);
+                        curTime += Time.deltaTime;
+                        yield return null;
+                    }
+                    break;
+                case PlAnimeType.fail:
+                    while (curTime < failTime)
+                    {
+                        playFail(curTime / failTime);
+                        curTime += Time.deltaTime;
+                        yield return null;
+                    }
+                    break;
+                case PlAnimeType.perfect:
+                    while (curTime < perfectTime)
+                    {
+                        playPerfect(curTime / perfectTime);
+                        curTime += Time.deltaTime;
+                        yield return null;
+                    }
+                    break;
+                case PlAnimeType.good:
+                    while (curTime < goodTime)
+                    {
+                        playGood(curTime / goodTime);
+                        curTime += Time.deltaTime;
+                        yield return null;
+                    }
+                    break;
+                case PlAnimeType.normal:
+                    while (curTime < normalTime)
+                    {
+                        playNormal(curTime / normalTime);
+                        curTime += Time.deltaTime;
+                        yield return null;
+                    }
+                    break;
+            }
         }
 
         //失败动画

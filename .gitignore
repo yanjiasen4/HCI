@@ -235,3 +235,4 @@ pip-log.txt
 *.prefab
 MusiCube/Assets/MusiCube/Materials/Corner.mat
 *.mat
+*.unitypackage

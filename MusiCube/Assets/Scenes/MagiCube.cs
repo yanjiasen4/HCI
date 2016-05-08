@@ -260,7 +260,7 @@ public class MagiCube : MonoBehaviour
 
     public void ClickSquare(int x, int y, int z)
     {
-        PlayerPrefs.SetInt("index", 1);
+       // PlayerPrefs.SetInt("index", 1);
         /*
         BlockStatus blockSt = squareBlock[y, z, x];
         if (blockSt.status == BlockStatus.state.active)

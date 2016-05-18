@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using MusiCube;
+using UnityEngine.SceneManagement;
 
 namespace ChooseSongUI
 {
@@ -90,6 +91,11 @@ namespace ChooseSongUI
             DisplayChange();
             DisplaySongName();
             DisplayDifficulty();
+
+            if (Input.GetKey(KeyCode.Return))
+            {
+                SceneManager.LoadScene(1);
+            }
         }
 
         void DisplayDifficulty()

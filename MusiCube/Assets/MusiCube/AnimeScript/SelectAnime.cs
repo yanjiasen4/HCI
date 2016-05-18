@@ -98,22 +98,34 @@ namespace MusiCube
             switch(dir)
             {
                 case Direction.xplus:
-                    xplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    xplusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+
+                   // xplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.xminus:
-                    xminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    xminusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+
+                 //   xminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.yplus:
-                    yplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    yplusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+
+                 //   yplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.yminus:
-                    yminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    yminusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+
+                 //   yminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.zplus:
-                    zplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    zplusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+
+                //    zplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.zminus:
-                    zminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    zminusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+
+                //    zminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 default:
                     break;

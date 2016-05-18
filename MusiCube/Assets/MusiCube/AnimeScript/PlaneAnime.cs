@@ -48,9 +48,7 @@ namespace MusiCube
         public float goodTime = 0.4f;
         public float normalTime = 0.4f;
         private Coroutine curRoutine;
-        public bool finish = true;
         // Use this for initialization
-
         void Start()
         {
             plane = GetComponentsInChildren<Transform>()[1];
@@ -60,7 +58,7 @@ namespace MusiCube
             int nums = dropHeightCurves.Length;
             //Debug.Log(nums);
             dropPlanes = new GameObject[nums];
-            for (int i = 0; i < nums; i++)
+            for(int i = 0; i < nums; i++)
             {
                 dropPlanes[i] = Instantiate(dropOpl, transform.position, transform.rotation) as GameObject;
                 dropPlanes[i].transform.parent = transform;
@@ -68,43 +66,21 @@ namespace MusiCube
             }
             pressLight = Instantiate(AnimeResource.instance.pressLight, transform.position, transform.rotation) as GameObject;
             pressLight.transform.parent = transform;
-            pressLight.SetActive(false);
+            pressLight.SetActive(false); 
         }
 
         public void autoPlay(PlAnimeType type)
         {
-            if (curRoutine != null)
+            if(curRoutine != null)
             {
                 StopCoroutine(curRoutine);
             }
             curRoutine = StartCoroutine(playCoroutine(type));
-            
-            // for demo
-            //curRoutine = StartCoroutine(playCoroutine(PlAnimeType.perfect));
-        }
-        public void autoPlayAfterRaise(PlAnimeType type)
-        {
-            StartCoroutine(playAfterRaise(type));
-        }
-        IEnumerator playAfterRaise(PlAnimeType type)
-        {
-            autoPlay(type);
-            while(!finish)
-            {
-                yield return null;
-            }
-            autoPlay(PlAnimeType.perfect);
-            while(!finish)
-            {
-                yield return null;
-            }
-            StateSwitch(PlAnimeType.none);
         }
 
         IEnumerator playCoroutine(PlAnimeType type)
         {
             curTime = 0;
-            finish = false;
             switch (type)
             {
                 case PlAnimeType.raise:
@@ -156,13 +132,12 @@ namespace MusiCube
                     }
                     break;
             }
-            finish = true;
         }
 
         //失败动画
         public void playFail(float time)
         {
-            if (anime != PlAnimeType.fail)
+            if(anime != PlAnimeType.fail)
             {
                 StateSwitch(PlAnimeType.fail);
             }
@@ -176,23 +151,23 @@ namespace MusiCube
         public void playRaise(float time)
         {
             //Debug.Log("play");
-            if (anime != PlAnimeType.raise)
+            if(anime!= PlAnimeType.raise)
             {
                 StateSwitch(PlAnimeType.raise);
             }
             plane.transform.localPosition = new Vector3(0, raiseCurve.Evaluate(time));
             Texture[] raiseSequence = AnimeResource.instance.planeRaiseSequence;
             int texIdx = (int)(time * raiseSequence.Length);
-            if (texIdx >= raiseSequence.Length)
+            if(texIdx >= raiseSequence.Length)
             {
                 texIdx = raiseSequence.Length - 1;
             }
             plane.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", raiseSequence[texIdx]);
-            for (int i = 0; i < dropPlanes.Length; i++)
+            for(int i = 0; i < dropPlanes.Length; i++)
             {
                 dropPlanes[i].transform.localPosition = new Vector3(0, dropHeightCurves[i].Evaluate(time));
                 float scale = dropScalesCurves[i].Evaluate(time);
-                dropPlanes[i].transform.localScale = new Vector3(scale, 1, scale);
+                dropPlanes[i].transform.localScale = new Vector3(scale,1, scale);
                 Color old = dropPlanes[i].GetComponent<MeshRenderer>().material.color;
                 old.a = dropTransparentCurves[i].Evaluate(time);
                 dropPlanes[i].GetComponent<MeshRenderer>().material.color = old;
@@ -212,7 +187,7 @@ namespace MusiCube
         //perfect光束
         public void playPerfect(float time)
         {
-            if (anime != PlAnimeType.perfect)
+            if(anime != PlAnimeType.perfect)
             {
                 StateSwitch(PlAnimeType.perfect);
             }
@@ -221,8 +196,8 @@ namespace MusiCube
             pressLight.transform.localPosition = new Vector3(0, lightHeightCurve.Evaluate(time));
             pressLight.transform.localScale = new Vector3(lightScaleX, perfectLightScaleCurve.Evaluate(time), lightScaleZ);
             MeshRenderer lightMesh = pressLight.GetComponent<MeshRenderer>();
-            lightMesh.material.SetFloat("_OutAlpha", perfectLightTransparentCurve.Evaluate(time));
-
+            lightMesh.material.SetFloat("_OutAlpha",perfectLightTransparentCurve.Evaluate(time));
+            
 
         }
 
@@ -258,14 +233,14 @@ namespace MusiCube
 
         void StateSwitch(PlAnimeType nType)
         {
-            if (anime == nType)
+            if(anime == nType)
             {
                 return;
-            }
+            }   
             switch (anime)
             {
                 case PlAnimeType.raise:
-                    for (int i = 0; i < dropPlanes.Length; i++)
+                    for(int i = 0; i < dropPlanes.Length; i++)
                     {
                         dropPlanes[i].SetActive(false);
                     }
@@ -279,7 +254,7 @@ namespace MusiCube
             switch (nType)
             {
                 case PlAnimeType.raise:
-                    for (int i = 0; i < dropPlanes.Length; i++)
+                    for(int i = 0; i < dropPlanes.Length; i++)
                     {
                         dropPlanes[i].SetActive(true);
                         dropPlanes[i].GetComponent<MeshRenderer>().material.color = themeColor;
@@ -363,7 +338,7 @@ namespace MusiCube
                     playRaise(curTime / testTime);
                     return;
                 }
-            }*/
+            }*/  
         }
 
     }

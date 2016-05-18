@@ -13,7 +13,10 @@ namespace MusiCube
         public Color newColor;
         public AnimationCurve scaleCurve;
         public AnimationCurve alphaCurve;
+        //for auto play anime
         public float totalTime;
+        private Coroutine curRoutine;
+
         private Color originColor;
         private CubeState state = CubeState.unSelect;
 
@@ -71,7 +74,11 @@ namespace MusiCube
         //自动播放，使用coroutine
         public void autoPlay(CubeState nState)
         {
-            StartCoroutine(playCoroutine(nState));
+            if(curRoutine != null)
+            {
+                StopCoroutine(curRoutine);
+            }
+            curRoutine = StartCoroutine(playCoroutine(nState));
         }
 
         IEnumerator playCoroutine(CubeState nState)

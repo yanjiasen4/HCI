@@ -184,6 +184,14 @@ namespace MusiCube
             plane.transform.localPosition = new Vector3(0, height, 0);
         }
 
+        public void playSilentHeight(float height)
+        {
+            if (anime != PlAnimeType.silentRaise)
+            {
+                StateSwitch(PlAnimeType.silentRaise);
+            }
+            plane.transform.localPosition = new Vector3(0, height, 0);
+        }
         //perfect光束
         public void playPerfect(float time)
         {
@@ -229,6 +237,14 @@ namespace MusiCube
             pressLight.transform.localScale = new Vector3(lightScaleX, normalLightScaleCurve.Evaluate(time), lightScaleZ);
             MeshRenderer lightMesh = pressLight.GetComponent<MeshRenderer>();
             lightMesh.material.SetFloat("_OutAlpha", normalLightTransparentCurve.Evaluate(time));
+        }
+
+        public void playNone()
+        {
+            if(anime != PlAnimeType.none)
+            {
+                StateSwitch(PlAnimeType.none);
+            }
         }
 
         void StateSwitch(PlAnimeType nType)

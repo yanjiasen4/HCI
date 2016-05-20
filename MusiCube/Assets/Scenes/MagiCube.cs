@@ -338,8 +338,6 @@ public class MagiCube : MonoBehaviour
         public int z;
     }
 
-
-    //太影响效率了吧，用3进制把每一位取出来就好了，还有blockpos这个数组有必要吗
     private BlockIndex ID2Index(int id)
     {
         BlockIndex ret = new BlockIndex();

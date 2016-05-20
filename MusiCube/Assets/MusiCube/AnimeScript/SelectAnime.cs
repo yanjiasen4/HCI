@@ -105,32 +105,32 @@ namespace MusiCube
             switch(dir)
             {
                 case Direction.xplus:
-                    xplusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+                    xplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.raise);
 
                    // xplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.xminus:
-                    xminusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+                    xminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.raise);
 
                  //   xminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.yplus:
-                    yplusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+                    yplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.raise);
 
                  //   yplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.yminus:
-                    yminusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+                    yminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.raise);
 
                  //   yminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.zplus:
-                    zplusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+                    zplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.raise);
 
                 //    zplusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;
                 case Direction.zminus:
-                    zminusPlane.GetComponent<PlaneAnime>().autoPlayAfterRaise(PlAnimeType.raise);
+                    zminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.raise);
 
                 //    zminusPlane.GetComponent<PlaneAnime>().autoPlay(PlAnimeType.perfect);
                     break;

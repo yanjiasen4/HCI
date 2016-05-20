@@ -46,8 +46,6 @@ public class MapMaker : MonoBehaviour {
         }
         timeSlice = CalculateTimeSlice();
         startTime = CalculateStartTime();
-        print(timeSlice);
-        print(startTime);
     }
 
     IEnumerator SetMusic()

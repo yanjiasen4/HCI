@@ -53,7 +53,7 @@ namespace MusiCube
         {
             plane = GetComponentsInChildren<Transform>()[1];
             //plane = transform.GetComponentInChildren<Transform>();
-            Texture[] tex = AnimeResource.instance.planeRaiseSequence;
+            //Texture[] tex = AnimeResource.instance.planeRaiseSequence;
             GameObject dropOpl = AnimeResource.instance.dropPlane as GameObject;
             int nums = dropHeightCurves.Length;
             //Debug.Log(nums);

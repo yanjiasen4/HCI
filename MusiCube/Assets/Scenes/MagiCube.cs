@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using MusiCube;
+using NAudio;
+using NAudio.Wave;
 using System;
 
 public class MagiCube : MonoBehaviour
@@ -55,10 +57,11 @@ public class MagiCube : MonoBehaviour
         StartCoroutine(LoadMusic());
     }
 
+
     // Use WWW to asynchronously load a music resource
     IEnumerator LoadMusic()
     {
-        string songPath = "Songs/" + songName + "/" + songName + ".ogg";
+        string songPath = "Songs/" + songName + "/" + songName + ".mp3";
         string beatmapPath = "Songs/" + songName + "/" + songName + ".mcb";
         songFullPathAndName = "file:///" + System.IO.Path.Combine(Application.streamingAssetsPath, songPath);
         beatmapFullPathAndName = System.IO.Path.Combine(Application.streamingAssetsPath, beatmapPath);
@@ -66,7 +69,8 @@ public class MagiCube : MonoBehaviour
         www = new WWW(songFullPathAndName);
         yield return www;
 
-        music.clip= www.GetAudioClip(true, true);
+        music.clip = AudioLoader.FromMp3Data(www.bytes);
+        //music.clip= www.GetAudioClip(true, true);
         musicLength = music.clip.length;
         Debug.Log("music: " + songName + "load success\n" + "Length: " + musicLength.ToString());
 
@@ -243,7 +247,6 @@ public class MagiCube : MonoBehaviour
         foreach(int key in notes.Keys)
         {
             timeStamp.Add(key);
-            print(key+offset);
         }
         if (notes.Count == 0) // 没有notes
             isOver = true;

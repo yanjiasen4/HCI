@@ -79,6 +79,12 @@ public class MapMaker : MonoBehaviour {
                 mc.music.Pause();
             }
         }
+
+        // play finished
+        if(!mc.isPaused && !mc.music.isPlaying)
+        {
+            mc.isPaused = true;
+        }
         
         if(!mc.isPaused)
         {
@@ -181,6 +187,7 @@ public class MapMaker : MonoBehaviour {
             mc.SetTime(t);
             tl.value = t;
         }
+    
 
         int minute = (int)(t) / 60;
         int second = (int)(t) % 60;

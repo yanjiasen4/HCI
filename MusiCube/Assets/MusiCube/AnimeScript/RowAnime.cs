@@ -105,7 +105,7 @@ namespace MusiCube
             rotate.eulerAngles = new Vector3(0, 0, -270);
             movePlanes[3].transform.localRotation = rotate;
             hintPlanes[3].transform.localRotation = rotate;
-            autoPlay(RowState.raise);
+            autoPlay(RowState.pulling);
         }
 
         public void autoPlay(RowState type)

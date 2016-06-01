@@ -169,7 +169,7 @@ public class MapMaker : MonoBehaviour {
 
     void FixedUpdate()
     {
-        
+
     }
 
     private void SetUIText()
@@ -188,7 +188,6 @@ public class MapMaker : MonoBehaviour {
             tl.value = t;
         }
     
-
         int minute = (int)(t) / 60;
         int second = (int)(t) % 60;
         int millis = realTime % 1000;
@@ -219,7 +218,6 @@ public class MapMaker : MonoBehaviour {
         // for test
         mc.bm.writeToFile("test.txt");
     }
-
 
     void UserSetBpm(float bpm)
     {

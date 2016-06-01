@@ -20,7 +20,6 @@ public class MagiCube : MonoBehaviour
     public float timeSlice = 0.5f;
     public Face threeFace;
     BlockStatus[,,] squareBlock = new BlockStatus[3, 3, 3];
-    int[,,] blockPos = new int[3,3,3]; // 记录魔方各个位置的当前方块ID
     public float timeCount = 0;
     int noteCount = 0;
     SortedDictionary<int, List<Note>> notes = new SortedDictionary<int, List<Note>>();
@@ -234,7 +233,6 @@ public class MagiCube : MonoBehaviour
                     Block blockScript = squareBlock[i, j, k].block.GetComponent<Block>();
                     if (blockScript)
                         blockScript.BindParent(k, i, j);
-                    blockPos[i, j, k] = i * 9 + j * 3 + k;
                 }
             }
         }
@@ -274,6 +272,117 @@ public class MagiCube : MonoBehaviour
         */
     }
 
+    private int[] getSliderIndex(Direction dir, int layer)
+    {
+        int[] ret = new int[9];
+        switch(dir)
+        {
+            case Direction.xminus:
+            case Direction.xplus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = 9 * i + layer;
+                        ret[3 * i + 1] = 9 * i + layer + 3;
+                        ret[3 * i + 2] = 9 * i + layer + 6;
+                    }
+                    break;
+                }
+            case Direction.yminus:
+            case Direction.yplus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = 9 * i + 3 * layer;
+                        ret[3 * i + 1] = 9 * i + 3 * layer + 1;
+                        ret[3 * i + 2] = 9 * i + 3 * layer + 2;
+                    }
+                    break;
+                }
+            case Direction.zminus:
+            case Direction.zplus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = 3 * i + 9 * layer;
+                        ret[3 * i + 1] = 3 * i + 9 * layer + 1;
+                        ret[3 * i + 2] = 3 * i + 9 * layer + 2;
+                    }
+                    break;
+                }
+            default: break;
+        }
+        return ret;
+    }
+    private int[] getSliderReplaceIndex(Direction dir, int layer)
+    {
+        int[] ret = new int[9];
+        switch(dir)
+        {
+            case Direction.xplus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = 18 + layer + 3 * i;
+                        ret[3 * i + 1] = 9 + layer + 3 * i;
+                        ret[3 * i + 1] = layer + 3 * i;
+                    }
+                    break;
+                }
+            case Direction.xminus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = (2 - i) * 3 + layer;
+                        ret[3 * i + 1] = (2 - i) * 3 + layer + 9;
+                        ret[3 * i + 2] = (2 - i) * 3 + layer + 18;
+                    }
+                    break;
+                }
+            case Direction.yplus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = (2 - i) + 3 * layer;
+                        ret[3 * i + 1] = (2 - i) + 3 * layer + 9;
+                        ret[3 * i + 2] = (2 - i) + 3 * layer + 18;
+                    }
+                    break;
+                }
+            case Direction.yminus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = 18 + 3 * layer + i;
+                        ret[3 * i + 1] = 9 + 3 * layer + i;
+                        ret[3 * i + 2] = 3 * layer + i;
+                    }
+                    break;
+                }
+            case Direction.zplus:
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = 6 + 9 * layer + i; ;
+                        ret[3 * i + 1] = 3 + 9 * layer + i;
+                        ret[3 * i + 1] = 9 * layer + i;
+                    }
+                    break;
+                }
+            case Direction.zminus:
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        ret[3 * i] = (2 - i) + 9 * layer;
+                        ret[3 * i + 1] = (2 - i) + 9 * layer + 3;
+                        ret[3 * i + 2] = (2 - i) * 9 * layer + 6;
+                    }
+                    break;
+                }
+        }
+        return ret;
+    }
+
     public void renderNote(Note nt)
     {
         switch (nt.type)
@@ -281,13 +390,14 @@ public class MagiCube : MonoBehaviour
             case NoteType.Note:
                 {
                     BlockStatus target;
-                    BlockIndex bi = ID2Index(nt.id);
+                    BlockIndex bi = getBlockIndex(nt.id);
                     target = squareBlock[bi.x, bi.y, bi.z];
                     renderSingleNote(target, nt);
                     break;
                 }
             case NoteType.Slider:
                 {
+                    renderSingleSlider(nt);
                     break;
                 }
             case NoteType.Plane:
@@ -304,15 +414,74 @@ public class MagiCube : MonoBehaviour
         target.block.GetComponent<SelectAnime>().playPlaneRaise(nt.dir, 0.5f);
     }
     
-    private void renderSingleSlider(BlockStatus target, Note nt)
+    private void renderSingleSlider(Note nt)
     {
         if (nt.type != NoteType.Slider)
             return;
+        int layerID = nt.id;
+        Direction dir = nt.dir;
+        int[] blocksBefore = getSliderIndex(dir, layerID);
+        int[] blocksAfter = getSliderReplaceIndex(dir, layerID);
+        BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
+        Vector3 rotateDir = getSliderRotateDirection(dir);
+        Vector3 centerPoint = squareBlock[centerIndex.x,centerIndex.y,centerIndex.z].block.transform.position;
+        List<BlockIndex> BIList = new List<BlockIndex>();
+        for(int i = 0; i < 8; i++)
+        {
+            int beforeIndex = blocksBefore[i];
+            int afterIndex = blocksAfter[i];
+            BlockIndex bi = getBlockIndex(beforeIndex);
+            squareBlock[bi.x, bi.y, bi.z].block.GetComponent<SelectAnime>().autoPlayRotate(centerPoint, rotateDir, 90f, 0.5f);
+            BIList.Add(getBlockIndex(afterIndex));
+        }
+        // Update blockPos
+        for(int i = 0; i < 8; i++)
+        {
+            int beforeIndex = blocksBefore[i];
+            BlockIndex bi = getBlockIndex(beforeIndex);
+            squareBlock[bi.x,bi.y,bi.z].block.name = BIList[i].ToString();
+        }
     }
+
+    private Vector3 getSliderRotateDirection(Direction dir)
+    {
+        Vector3 ret;
+        switch(dir)
+        {
+            case Direction.xplus:
+                ret = Vector3.forward + Vector3.left;
+                ret.Normalize();
+                break;
+            case Direction.xminus:
+                ret = Vector3.back + Vector3.right;
+                ret.Normalize();
+                break;
+            case Direction.yplus:
+                ret = Vector3.up;
+                break;
+            case Direction.yminus:
+                ret = Vector3.down;
+                break;
+            case Direction.zplus:
+                ret = Vector3.forward + Vector3.right;
+                ret.Normalize();
+                break;
+            case Direction.zminus:
+                ret = Vector3.back + Vector3.left;
+                ret.Normalize();
+                break;
+            default:
+                ret = Vector3.zero;
+                break;
+        }
+        return ret;
+    }
+
     private void renderSinglePlane(BlockStatus target, Note nt)
     {
         if (nt.type != NoteType.Plane)
             return;
+        // [TODO]
     }
 
     public float GetSongLength()
@@ -336,34 +505,23 @@ public class MagiCube : MonoBehaviour
 
     public struct BlockIndex
     {
+        public BlockIndex(int xx, int yy, int zz)
+        {
+            x = xx;
+            y = yy;
+            z = zz;
+        }
         public int x;
         public int y;
         public int z;
     }
 
-    private BlockIndex ID2Index(int id)
+    private BlockIndex getBlockIndex(int id)
     {
-        BlockIndex ret = new BlockIndex();
-        for (int i = 0; i < 3; i++)
-        { 
-            for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    if (blockPos[i, j, k] == id)
-                    {
-                        ret.x = i;
-                        ret.y = j;
-                        ret.z = k;
-                        return ret;
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+        BlockIndex bi = new BlockIndex(id / 9, (id % 9) / 3, id % 3);
+        return bi;
+    } 
     
-
     class BlockStatus
     {
         public GameObject block;

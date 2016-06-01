@@ -139,6 +139,32 @@ namespace MusiCube
             }
         }
 
+        public void autoPlayRotate(Vector3 point, Vector3 axis, float angle, float t)
+        {
+            if (curRoutine != null)
+            {
+                StopCoroutine(curRoutine);
+            }
+            curRoutine = StartCoroutine(playCoroutineRotate(point, axis, angle, t));
+        }
+
+        IEnumerator playCoroutineRotate(Vector3 point, Vector3 axis, float angle, float t)
+        {
+            float currTime = 0;
+            while(currTime < t)
+            {
+                float dt = Time.deltaTime;
+                playRotate(point, axis, angle * dt/t);
+                currTime += dt;
+                yield return null;
+            }
+        }
+
+        public void playRotate(Vector3 point, Vector3 axis, float angle)
+        {
+            transform.RotateAround(point, axis, angle);
+        }
+
         void stateSwitch(CubeState nState)
         {
             float scale = 0;

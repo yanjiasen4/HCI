@@ -33,6 +33,7 @@ public class MagiCube : MonoBehaviour
     public AudioSource music;
     float musicLength; // ms
 
+    public Quaternion blockRotate;
     // 帮助加载音乐
     WWW www;
     public bool isDone = false;
@@ -40,7 +41,16 @@ public class MagiCube : MonoBehaviour
     string songName;
     string songFullPathAndName;
     string beatmapFullPathAndName;
+    string blockPath = "MagiCube/";
     public BeatMap bm;
+
+    public float appTime; // 缩圈时间/ms
+    public float judgeRange; // 判定范围/ms
+
+    private float[] appTimeTable =
+    {
+        1800,1680,1560,1440,1320,1200,1050,900,750,600,450
+    };
 
     // Use this for initialization
 
@@ -54,6 +64,9 @@ public class MagiCube : MonoBehaviour
         InitialSquare();
         InitialNote();
         StartCoroutine(LoadMusic());
+        blockRotate = block.transform.rotation;
+        appTime = getAppTime(bm.ar);
+        judgeRange = getJudgeRange(bm.od);
     }
 
 
@@ -282,9 +295,9 @@ public class MagiCube : MonoBehaviour
                 {
                     for(int i = 0; i < 3; i++)
                     {
-                        ret[3 * i] = 9 * i + layer;
-                        ret[3 * i + 1] = 9 * i + layer + 3;
-                        ret[3 * i + 2] = 9 * i + layer + 6;
+                        ret[3 * i] = 9 * i + 3 * layer;
+                        ret[3 * i + 1] = 9 * i + 3 * layer + 1;
+                        ret[3 * i + 2] = 9 * i + 3 * layer + 2;
                     }
                     break;
                 }
@@ -293,9 +306,9 @@ public class MagiCube : MonoBehaviour
                 {
                     for(int i = 0; i < 3; i++)
                     {
-                        ret[3 * i] = 9 * i + 3 * layer;
-                        ret[3 * i + 1] = 9 * i + 3 * layer + 1;
-                        ret[3 * i + 2] = 9 * i + 3 * layer + 2;
+                        ret[3 * i] = 3 * i + 9 * layer;
+                        ret[3 * i + 1] = 3 * i + 9 * layer + 1;
+                        ret[3 * i + 2] = 3 * i + 9 * layer + 2;
                     }
                     break;
                 }
@@ -304,9 +317,9 @@ public class MagiCube : MonoBehaviour
                 {
                     for(int i = 0; i < 3; i++)
                     {
-                        ret[3 * i] = 3 * i + 9 * layer;
-                        ret[3 * i + 1] = 3 * i + 9 * layer + 1;
-                        ret[3 * i + 2] = 3 * i + 9 * layer + 2;
+                        ret[3 * i] = 9 * i + layer;
+                        ret[3 * i + 1] = 9 * i + layer + 3;
+                        ret[3 * i + 2] = 9 * i + layer + 6;
                     }
                     break;
                 }
@@ -323,9 +336,9 @@ public class MagiCube : MonoBehaviour
                 {
                     for(int i = 0; i < 3; i++)
                     {
-                        ret[3 * i] = 18 + layer + 3 * i;
-                        ret[3 * i + 1] = 9 + layer + 3 * i;
-                        ret[3 * i + 1] = layer + 3 * i;
+                        ret[3 * i] =  2 - i + 3 * layer;
+                        ret[3 * i + 1] = 2 - i + 3 * layer + 9;
+                        ret[3 * i + 1] = 2 - i + 3 * layer + 18;
                     }
                     break;
                 }
@@ -333,9 +346,9 @@ public class MagiCube : MonoBehaviour
                 {
                     for(int i = 0; i < 3; i++)
                     {
-                        ret[3 * i] = (2 - i) * 3 + layer;
-                        ret[3 * i + 1] = (2 - i) * 3 + layer + 9;
-                        ret[3 * i + 2] = (2 - i) * 3 + layer + 18;
+                        ret[3 * i] = i + 3 * layer + 18;
+                        ret[3 * i + 1] = i + 3 * layer + 9;
+                        ret[3 * i + 2] = i + 3 * layer;
                     }
                     break;
                 }
@@ -343,9 +356,9 @@ public class MagiCube : MonoBehaviour
                 {
                     for(int i = 0; i < 3; i++)
                     {
-                        ret[3 * i] = (2 - i) + 3 * layer;
-                        ret[3 * i + 1] = (2 - i) + 3 * layer + 9;
-                        ret[3 * i + 2] = (2 - i) + 3 * layer + 18;
+                        ret[3 * i] = (2 - i) + 9 * layer;
+                        ret[3 * i + 1] = (2 - i) + 9 * layer + 3;
+                        ret[3 * i + 2] = (2 - i) + 9 * layer + 6;
                     }
                     break;
                 }
@@ -353,9 +366,9 @@ public class MagiCube : MonoBehaviour
                 {
                     for(int i = 0; i < 3; i++)
                     {
-                        ret[3 * i] = 18 + 3 * layer + i;
-                        ret[3 * i + 1] = 9 + 3 * layer + i;
-                        ret[3 * i + 2] = 3 * layer + i;
+                        ret[3 * i] = i + 9 * layer + 6;
+                        ret[3 * i + 1] = i + 9 * layer + 3;
+                        ret[3 * i + 2] = i * layer;
                     }
                     break;
                 }
@@ -389,10 +402,10 @@ public class MagiCube : MonoBehaviour
         {
             case NoteType.Note:
                 {
-                    BlockStatus target;
-                    BlockIndex bi = getBlockIndex(nt.id);
-                    target = squareBlock[bi.x, bi.y, bi.z];
-                    renderSingleNote(target, nt);
+                    //BlockStatus target;
+                   // BlockIndex bi = getBlockIndex(nt.id);
+                   // target = squareBlock[bi.x, bi.y, bi.z];
+                    renderSingleNote(nt);
                     break;
                 }
             case NoteType.Slider:
@@ -407,11 +420,12 @@ public class MagiCube : MonoBehaviour
         }
     }
 
-    private void renderSingleNote(BlockStatus target, Note nt)
+    private void renderSingleNote(Note nt)
     {
         if (nt.type != NoteType.Note)
             return;
-        target.block.GetComponent<SelectAnime>().playPlaneRaise(nt.dir, 0.5f);
+        GameObject target = GameObject.Find(blockPath + nt.id.ToString());
+        target.GetComponent<SelectAnime>().playPlaneRaise(nt.dir, appTime);
     }
     
     private void renderSingleSlider(Note nt)
@@ -420,27 +434,35 @@ public class MagiCube : MonoBehaviour
             return;
         int layerID = nt.id;
         Direction dir = nt.dir;
+        float duration = nt.duration / 1000f;
         int[] blocksBefore = getSliderIndex(dir, layerID);
         int[] blocksAfter = getSliderReplaceIndex(dir, layerID);
         BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
         Vector3 rotateDir = getSliderRotateDirection(dir);
         Vector3 centerPoint = squareBlock[centerIndex.x,centerIndex.y,centerIndex.z].block.transform.position;
-        List<BlockIndex> BIList = new List<BlockIndex>();
-        for(int i = 0; i < 8; i++)
+        List<int> BIList = new List<int>();
+        for(int i = 0; i < 9; i++)
         {
             int beforeIndex = blocksBefore[i];
             int afterIndex = blocksAfter[i];
             BlockIndex bi = getBlockIndex(beforeIndex);
-            squareBlock[bi.x, bi.y, bi.z].block.GetComponent<SelectAnime>().autoPlayRotate(centerPoint, rotateDir, 90f, 0.5f);
-            BIList.Add(getBlockIndex(afterIndex));
+            GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
+            // 总是旋转90度
+            blk.GetComponent<SelectAnime>().autoPlayRotate(centerPoint, rotateDir, 90f, duration, appTime);
+           // squareBlock[bi.x, bi.y, bi.z].block.GetComponent<SelectAnime>().autoPlayRotate(centerPoint,rotateDir , 90f, 1f);
+            BIList.Add(afterIndex);
         }
         // Update blockPos
+        
+        /*
         for(int i = 0; i < 8; i++)
         {
             int beforeIndex = blocksBefore[i];
             BlockIndex bi = getBlockIndex(beforeIndex);
             squareBlock[bi.x,bi.y,bi.z].block.name = BIList[i].ToString();
         }
+        */
+        
     }
 
     private Vector3 getSliderRotateDirection(Direction dir)
@@ -521,6 +543,17 @@ public class MagiCube : MonoBehaviour
         BlockIndex bi = new BlockIndex(id / 9, (id % 9) / 3, id % 3);
         return bi;
     } 
+
+    private float getAppTime(float ar)
+    {
+        int up = (int)Math.Ceiling(ar);
+        int down = (int)(ar);
+        return Mathf.Lerp(appTimeTable[down], appTimeTable[up], ar);
+    }
+    private float getJudgeRange(float od)
+    {
+        return 80 - 6 * od;
+    }
     
     class BlockStatus
     {

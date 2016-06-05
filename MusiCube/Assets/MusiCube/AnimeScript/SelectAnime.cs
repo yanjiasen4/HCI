@@ -139,17 +139,18 @@ namespace MusiCube
             }
         }
 
-        public void autoPlayRotate(Vector3 point, Vector3 axis, float angle, float t)
+        public void autoPlayRotate(Vector3 point, Vector3 axis, float angle, float t, float delay)
         {
             if (curRoutine != null)
             {
                 StopCoroutine(curRoutine);
             }
-            curRoutine = StartCoroutine(playCoroutineRotate(point, axis, angle, t));
+            curRoutine = StartCoroutine(playCoroutineRotate(point, axis, angle, t, delay));
         }
 
-        IEnumerator playCoroutineRotate(Vector3 point, Vector3 axis, float angle, float t)
+        IEnumerator playCoroutineRotate(Vector3 point, Vector3 axis, float angle, float t, float delay)
         {
+            yield return new WaitForSeconds(delay);
             float currTime = 0;
             while(currTime < t)
             {
@@ -187,7 +188,7 @@ namespace MusiCube
         // Update is called once per frame
         void Update()
         {
-
+            
         }
     }
 }

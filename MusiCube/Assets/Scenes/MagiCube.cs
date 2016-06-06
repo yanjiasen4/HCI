@@ -44,8 +44,8 @@ public class MagiCube : MonoBehaviour
     string blockPath = "MagiCube/";
     public BeatMap bm;
 
-    public float appTime; // 缩圈时间/ms
-    public float judgeRange; // 判定范围/ms
+    public float appTime; // 缩圈时间/s
+    public float judgeRange; // 判定范围/s
 
     private float[] appTimeTable =
     {
@@ -59,14 +59,16 @@ public class MagiCube : MonoBehaviour
         Debug.Assert(block != null);
         music = GetComponent<AudioSource>();
         bm = new BeatMap();
+
+        // for debug
         bm.readFromFile("test.txt");
         songName = "STYX HELIX";
         InitialSquare();
         InitialNote();
         StartCoroutine(LoadMusic());
         blockRotate = block.transform.rotation;
-        appTime = getAppTime(bm.ar);
-        judgeRange = getJudgeRange(bm.od);
+        appTime = getAppTime(bm.ar)/1000;
+        judgeRange = getJudgeRange(bm.od)/1000;
     }
 
 
@@ -441,6 +443,7 @@ public class MagiCube : MonoBehaviour
         Vector3 rotateDir = getSliderRotateDirection(dir);
         Vector3 centerPoint = squareBlock[centerIndex.x,centerIndex.y,centerIndex.z].block.transform.position;
         List<int> BIList = new List<int>();
+        //GameObject sliderAnimation = Instantiate();
         for(int i = 0; i < 9; i++)
         {
             int beforeIndex = blocksBefore[i];
@@ -454,15 +457,13 @@ public class MagiCube : MonoBehaviour
         }
         // Update blockPos
         
-        /*
-        for(int i = 0; i < 8; i++)
+        
+        for(int i = 0; i < 9; i++)
         {
             int beforeIndex = blocksBefore[i];
             BlockIndex bi = getBlockIndex(beforeIndex);
-            squareBlock[bi.x,bi.y,bi.z].block.name = BIList[i].ToString();
+            squareBlock[bi.x, bi.y, bi.z].block.name = BIList[i].ToString();
         }
-        */
-        
     }
 
     private Vector3 getSliderRotateDirection(Direction dir)

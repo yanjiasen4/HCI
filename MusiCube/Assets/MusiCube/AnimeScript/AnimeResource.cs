@@ -5,6 +5,7 @@ namespace MusiCube
     public class AnimeResource : MonoBehaviour
     {
         private Texture[] _planeRaiseSequence;
+        private Sprite[] _circleSequence;
         private Object _dropPlane;
         private Object _pressLight;
         private Object _rowSubPlane;
@@ -27,6 +28,17 @@ namespace MusiCube
                 }
                
                 return _planeRaiseSequence;
+            }
+        }
+        public Sprite[] circleSequence
+        {
+            get
+            {
+                if(_circleSequence == null)
+                {
+                    _circleSequence = Resources.LoadAll<Sprite>("Texture/CircleSequence");
+                }
+                return _circleSequence;
             }
         }
         public Object pressLight

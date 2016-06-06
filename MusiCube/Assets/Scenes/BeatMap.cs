@@ -281,7 +281,7 @@ namespace MusiCube
             }
             if(nt.type == NoteType.Slider)
             {
-                str = "1," + t.ToString() + "," + nt.duration.ToString() + "," + nt.id.ToString() + "," + ((int)nt.dir).ToString();
+                str = "1," + t.ToString() + "," + nt.id.ToString() + "," + ((int)nt.dir).ToString() + "," + nt.duration.ToString();
             }
             if(nt.type == NoteType.Plane)
             {
@@ -325,7 +325,7 @@ namespace MusiCube
             if(str[0] == "1") // Slider
             {
                 nt.type = NoteType.Slider;
-                nt.id = int.Parse(str[1]);
+                nt.id = int.Parse(str[2]);
                 nt.dir = (Direction)(int.Parse(str[3]));
                 nt.duration = int.Parse(str[4]);
             }

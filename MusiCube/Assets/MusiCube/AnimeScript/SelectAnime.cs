@@ -139,6 +139,33 @@ namespace MusiCube
             }
         }
 
+        public void autoPlayRotate(Vector3 point, Vector3 axis, float angle, float t, float delay)
+        {
+            if (curRoutine != null)
+            {
+                StopCoroutine(curRoutine);
+            }
+            curRoutine = StartCoroutine(playCoroutineRotate(point, axis, angle, t, delay));
+        }
+
+        IEnumerator playCoroutineRotate(Vector3 point, Vector3 axis, float angle, float t, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            float currTime = 0;
+            while(currTime < t)
+            {
+                float dt = Time.deltaTime;
+                playRotate(point, axis, angle * dt/t);
+                currTime += dt;
+                yield return null;
+            }
+        }
+
+        public void playRotate(Vector3 point, Vector3 axis, float angle)
+        {
+            transform.RotateAround(point, axis, angle);
+        }
+
         void stateSwitch(CubeState nState)
         {
             float scale = 0;
@@ -161,7 +188,7 @@ namespace MusiCube
         // Update is called once per frame
         void Update()
         {
-
+            
         }
     }
 }

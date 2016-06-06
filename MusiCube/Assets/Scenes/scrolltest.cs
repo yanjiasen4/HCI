@@ -139,8 +139,6 @@ namespace ChooseSongUI
                 songb.GetComponent<RectTransform>().sizeDelta = new Vector2(length, height);
             }
 
-            //Debug.Log(last == now);
-
             if (last != now)
             {
                 nowDiff = 0;

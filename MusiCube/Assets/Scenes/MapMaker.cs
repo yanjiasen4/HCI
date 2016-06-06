@@ -79,6 +79,12 @@ public class MapMaker : MonoBehaviour {
                 mc.music.Pause();
             }
         }
+
+        // play finished
+        if(!mc.isPaused && !mc.music.isPlaying)
+        {
+            mc.isPaused = true;
+        }
         
         if(!mc.isPaused)
         {
@@ -163,7 +169,7 @@ public class MapMaker : MonoBehaviour {
 
     void FixedUpdate()
     {
-        
+
     }
 
     private void SetUIText()
@@ -181,7 +187,7 @@ public class MapMaker : MonoBehaviour {
             mc.SetTime(t);
             tl.value = t;
         }
-
+    
         int minute = (int)(t) / 60;
         int second = (int)(t) % 60;
         int millis = realTime % 1000;
@@ -212,7 +218,6 @@ public class MapMaker : MonoBehaviour {
         // for test
         mc.bm.writeToFile("test.txt");
     }
-
 
     void UserSetBpm(float bpm)
     {

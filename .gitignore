@@ -242,3 +242,4 @@ MusiCube/Assets/Doxyfile
 *.exe
 MusiCube/test_Data
 MusiCube/test_Data/
+*.csproj

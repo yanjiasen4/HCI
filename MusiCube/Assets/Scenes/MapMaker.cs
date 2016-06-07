@@ -80,6 +80,8 @@ public class MapMaker : MonoBehaviour {
             }
         }
 
+        
+
         // play finished
         if(!mc.isPaused && !mc.music.isPlaying)
         {

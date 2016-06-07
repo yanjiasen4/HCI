@@ -144,8 +144,8 @@ public class MagiCube : MonoBehaviour
                 {
                     if(!isPaused)
                     {
-                       // timeCount += Time.deltaTime;
-                 
+                        // timeCount += Time.deltaTime;
+                        
                     }
                     
                     /*
@@ -452,12 +452,10 @@ public class MagiCube : MonoBehaviour
             GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
             // 总是旋转90度
             blk.GetComponent<SelectAnime>().autoPlayRotate(centerPoint, rotateDir, 90f, duration, appTime);
-           // squareBlock[bi.x, bi.y, bi.z].block.GetComponent<SelectAnime>().autoPlayRotate(centerPoint,rotateDir , 90f, 1f);
             BIList.Add(afterIndex);
         }
         // Update blockPos
-        
-        
+    
         for(int i = 0; i < 9; i++)
         {
             int beforeIndex = blocksBefore[i];
@@ -518,6 +516,67 @@ public class MagiCube : MonoBehaviour
     public void PlayBlockIdleAnimation(int id)
     {
         squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<SelectAnime>().autoPlay(CubeState.unSelect);
+    }
+
+    // 编辑函数
+    private int getTimeRangeIndex(int t, int range)
+    {
+        int rt = t - range;
+        int head = 0;
+        int tail = timeStamp.Count-1;
+        int i = 0;
+        while(tail > head+1)
+        {
+            i = (head + tail) / 2;
+            if (rt > timeStamp[i])
+                head = (head + tail) / 2;
+            else if (rt < timeStamp[i])
+                tail = (head + tail) / 2;
+            else
+                break;
+        }
+        if (timeStamp[i] < rt)
+            i = i + 1;
+        return i;
+    }
+
+    private void addNote(int t, NoteType type, int blockID, Axis a, int duration)
+    {
+        Note nt = new Note();
+        nt.type = type;
+        nt.id = blockID;
+        nt.dir = 
+        bm.addNote(t, blockID, a);
+        Note nt
+        int index = getTimeRangeIndex(t, 0); 
+        if (!timeStamp.Contains(t))
+        {
+            timeStamp.Insert(index, t);
+            List<Note> temp = new List<Note>();
+            temp.Add(nt);
+            notes.Add(t, temp);
+        }
+        else
+        {
+            notes[t].Add(nt);
+        }      
+    }
+    private void deleteNote(int t, Note nt)
+    {
+        if (!timeStamp.Contains(t))
+            return;
+        bm.deleteNote(t, nt);
+        int index = getTimeRangeIndex(t, 0);
+        notes[t].Remove(nt);
+        if (notes[t].Count == 0)
+        {
+            notes.Remove(t);
+            timeStamp.Remove(t);
+        } 
+    }
+    private void SyncNote() // 强制同步beatMap中的notes和MagiCube中保存notes的数据结构
+    {
+        return;
     }
 
     public void saveBeatMap()

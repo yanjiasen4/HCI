@@ -120,6 +120,10 @@ namespace MusiCube
                 if(notes[t].Contains(nt))
                 {
                     notes[t].Remove(nt);
+                    if(notes[t].Count == 0) // if empty
+                    {
+                        notes.Remove(t);
+                    }
                     return true;
                 }
             }

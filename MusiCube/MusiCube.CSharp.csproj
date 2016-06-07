@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.4f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -70,8 +72,12 @@
     <Reference Include="UnityEditor.iOS.Extensions.Common">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio">
+      <HintPath>Assets\NAudio\NAudio.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BlockTest.cs" />
     <Compile Include="Assets\LeapC\Arm.cs" />
     <Compile Include="Assets\LeapC\Bone.cs" />
     <Compile Include="Assets\LeapC\CSharpExtensions.cs" />
@@ -155,6 +161,7 @@
     <Compile Include="Assets\MusiCube\AnimeScript\PlaneAnime.cs" />
     <Compile Include="Assets\MusiCube\AnimeScript\RowAnime.cs" />
     <Compile Include="Assets\MusiCube\AnimeScript\SelectAnime.cs" />
+    <Compile Include="Assets\Scenes\AudioLoader.cs" />
     <Compile Include="Assets\Scenes\BeatMap.cs" />
     <Compile Include="Assets\Scenes\Block.cs" />
     <Compile Include="Assets\Scenes\MagiCube.cs" />
@@ -165,6 +172,7 @@
     <Compile Include="Assets\UI\Anime\CameraAnime.cs" />
     <Compile Include="Assets\UI\Anime\CubeAnime.cs" />
     <Compile Include="Assets\UI\Script\CircleAnime.cs" />
+    <Compile Include="Assets\UI\Script\Test\UIIdxViewTest.cs" />
     <Compile Include="Assets\UI\Script\UIIdxView.cs" />
   </ItemGroup>
   <ItemGroup>

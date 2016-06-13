@@ -94,9 +94,6 @@
     <Reference Include="NAudio">
       <HintPath>Assets\Plugins\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio">
-      <HintPath>Assets\NAudio\NAudio.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="MusiCube.CSharp.csproj">

@@ -20,10 +20,36 @@ public class MagiCube : MonoBehaviour
     public float timeSlice = 0.5f;
     public Face threeFace;
     BlockStatus[,,] squareBlock = new BlockStatus[3, 3, 3];
+    Vector3[,,] initialBlockPosition = new Vector3[3, 3, 3];
     public float timeCount = 0;
     int noteCount = 0;
-    SortedDictionary<int, List<Note>> notes = new SortedDictionary<int, List<Note>>();
-    List<int> timeStamp = new List<int>();
+    public SortedDictionary<int, List<Note>> notes = new SortedDictionary<int, List<Note>>();
+    public class Slider : IComparable
+    {
+        public int start;
+        public int end;
+        public Note nt;
+        public int CompareTo(object obj)
+        {
+            int res = 0;
+            try
+            {
+                Slider sld = (Slider)obj;
+                if (this.start > sld.start)
+                    return 1;
+                else if (this.start < sld.start)
+                    return -1;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Slider/CompareTo: Compare exception", ex.InnerException);
+            }
+            return res;
+        }
+    }
+    public List<Slider> sliders = new List<Slider>();
+
+    public List<int> timeStamp = new List<int>();
     List<Note> currentNotes = new List<Note>();
     List<Note> nextNotes = new List<Note>();
     bool isOver = false;
@@ -67,10 +93,10 @@ public class MagiCube : MonoBehaviour
         InitialNote();
         StartCoroutine(LoadMusic());
         blockRotate = block.transform.rotation;
-        appTime = getAppTime(bm.ar)/1000;
-        judgeRange = getJudgeRange(bm.od)/1000;
+        appTime = getAppTime(bm.ar);
+        judgeRange = getJudgeRange(bm.od);
+        recordBlockPosition();
     }
-
 
     // Use WWW to asynchronously load a music resource
     IEnumerator LoadMusic()
@@ -124,7 +150,7 @@ public class MagiCube : MonoBehaviour
                     else
                     {
                         int timeMs = (int)(timeCount * 1000);
-                        if (timeMs >= timeStamp[noteCount]+bm.GetOffset() - 400)
+                        if (timeMs >= timeStamp[noteCount]+bm.GetOffset() - appTime)
                         {
                             foreach (Note nt in currentNotes)
                             {
@@ -142,6 +168,27 @@ public class MagiCube : MonoBehaviour
             // 编辑模式，画面静止
             case GameState.Edit:
                 {
+                    clearBlockAnimation();
+                    resetBlockPosition();
+                    int timeMs = (int)(timeCount * 1000);
+                    if (timeMs > timeStamp[timeStamp.Count - 1])
+                        break;
+                    List<int> notesIndex = getTimeRangeNoteIndex(timeMs, (int)appTime);
+                    List<Slider> slidersRender = getTimeRangeSlider(timeMs, (int)appTime);
+                    foreach(int i in notesIndex)
+                    {
+                        foreach(Note nt in notes[timeStamp[i]])
+                        {
+                            renderSingleNoteStaticly(nt, timeStamp[i], timeMs);
+                        }
+                    }
+                    
+                    foreach(Slider sld in slidersRender)
+                    {
+                        print("!");
+                        renderSingleSliderStaticly(sld.nt, sld.start, sld.end, timeMs);
+                    }
+
                     if(!isPaused)
                     {
                         // timeCount += Time.deltaTime;
@@ -154,62 +201,19 @@ public class MagiCube : MonoBehaviour
                     break;
                 }
         }
+    }
 
-        /*
-        timeCount += Time.deltaTime;
-        if (timeCount > timeSlice)
+    private List<Slider> getTimeRangeSlider(int timeMs, int appTime)
+    {
+        List<Slider> ret = new List<Slider>();
+        foreach(Slider sld in sliders)
         {
-            Face.faceType face = threeFace.getRandomFace();
-            int i = getRandomInt(0, 2);
-            int j = getRandomInt(0, 2);
-            BlockStatus target;
-            switch (face)
-            {
-                case Face.faceType.yPlus:
-                    target = squareBlock[2, i, j];
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = target.block.transform.up;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                case Face.faceType.xPlus:
-                    target = squareBlock[i, j, 2];
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = target.block.transform.right;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                case Face.faceType.yMinus:
-                    target = squareBlock[0, i, j];
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = -target.block.transform.up;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                case Face.faceType.xMinus:
-                    target = squareBlock[i, j, 0];
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = -target.block.transform.right;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-                case Face.faceType.zMinus:
-                    target = squareBlock[i, 0, j];
-                    if (target.status == BlockStatus.state.inAcive)
-                    {
-                        target.forward = -target.block.transform.forward;
-                        StartCoroutine(target.moveUp());
-                    }
-                    break;
-            }
-
-            timeCount = 0;
+            if (sld.start - appTime > timeMs || sld.end < timeMs)
+                break;
+            if (sld.start - appTime < timeMs && sld.end > timeMs)
+                ret.Add(sld);
         }
-        */
+        return ret;
     }
 
     public void SetTime(float t)
@@ -272,6 +276,21 @@ public class MagiCube : MonoBehaviour
             currentNotes = notes[timeStamp[0]];
             nextNotes = notes[timeStamp[1]];
         }
+        // add sliders
+        foreach(int key in notes.Keys)
+        {
+            foreach(Note nt in notes[key])
+            {
+                if(nt.type == NoteType.Slider)
+                {
+                    Slider sld = new Slider();
+                    sld.nt = nt;
+                    sld.start = key;
+                    sld.end = key + nt.duration;
+                    sliders.Add(sld);
+                }
+            }
+        }
     }
 
     public void ClickSquare(int x, int y, int z)
@@ -285,6 +304,15 @@ public class MagiCube : MonoBehaviour
             StartCoroutine(blockSt.moveBack());
         }
         */
+    }
+
+    private void recordBlockPosition()
+    {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                for (int k = 0; k < 3; k++)
+                    initialBlockPosition[i, j, k] = squareBlock[i, j, k].block.transform.position;
+
     }
 
     private int[] getSliderIndex(Direction dir, int layer)
@@ -448,7 +476,6 @@ public class MagiCube : MonoBehaviour
         {
             int beforeIndex = blocksBefore[i];
             int afterIndex = blocksAfter[i];
-            BlockIndex bi = getBlockIndex(beforeIndex);
             GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
             // 总是旋转90度
             blk.GetComponent<SelectAnime>().autoPlayRotate(centerPoint, rotateDir, 90f, duration, appTime);
@@ -505,6 +532,79 @@ public class MagiCube : MonoBehaviour
         // [TODO]
     }
 
+    private void renderNoteStaticly(Note nt, int noteTime, int endTime, int t)
+    {
+        switch(nt.type)
+        {
+            case NoteType.Note:
+                renderSingleNoteStaticly(nt, noteTime, t);
+                break;
+            case NoteType.Slider:
+                renderSingleSliderStaticly(nt, noteTime, endTime, t);
+                break;
+            case NoteType.Plane:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void renderSingleNoteStaticly(Note nt, int noteTime, int t)
+    {
+        if (nt.type != NoteType.Note)
+            return;
+        float animationTime = 1f -((float)(noteTime - t)) / appTime;
+        if (animationTime < 0)
+            return;
+        GameObject target = GameObject.Find(blockPath + nt.id.ToString());
+        target.GetComponent<SelectAnime>().playPlaneRaiseStaticly(nt.dir, animationTime);
+    }
+    private void renderSingleSliderStaticly(Note nt, int noteTime, int endTime, int t)
+    {
+        if (nt.type != NoteType.Slider)
+            return;
+        if(t <= noteTime - appTime || t >= endTime)
+        {
+            return;
+        }
+        // 缩圈
+        if (t > noteTime - appTime && t <= noteTime)
+        {
+
+        }
+        else if (t > noteTime && t < endTime)
+        {
+            int layerID = nt.id;
+            Direction dir = nt.dir;
+            float animationPercent = (float)(t - noteTime) / (float)(nt.duration);
+            int[] blocksBefore = getSliderIndex(dir, layerID);
+            int[] blocksAfter = getSliderReplaceIndex(dir, layerID);
+            BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
+            Vector3 rotateDir = getSliderRotateDirection(dir);
+            Vector3 centerPoint = squareBlock[centerIndex.x, centerIndex.y, centerIndex.z].block.transform.position;
+            List<int> BIList = new List<int>();
+            //GameObject sliderAnimation = Instantiate();
+            //resetBlockPosition();
+            for (int i = 0; i < 9; i++)
+            {
+                int beforeIndex = blocksBefore[i];
+                int afterIndex = blocksAfter[i];
+                GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
+                // 总是旋转90度
+                blk.GetComponent<SelectAnime>().playRotate(centerPoint, rotateDir, 90f * animationPercent);
+                BIList.Add(afterIndex);
+            }
+        }
+    }
+
+    private void clearBlockAnimation()
+    {
+        foreach(BlockStatus blk in squareBlock)
+        {
+            blk.block.GetComponent<SelectAnime>().playPlaneClearStaticly();
+        }
+    }
+
     public float GetSongLength()
     {
         return musicLength;
@@ -519,36 +619,87 @@ public class MagiCube : MonoBehaviour
     }
 
     // 编辑函数
-    private int getTimeRangeIndex(int t, int range)
+    private List<int> getTimeRangeNoteIndex(int t, int range)
     {
-        int rt = t - range;
-        int head = 0;
-        int tail = timeStamp.Count-1;
-        int i = 0;
-        while(tail > head+1)
-        {
-            i = (head + tail) / 2;
-            if (rt > timeStamp[i])
-                head = (head + tail) / 2;
-            else if (rt < timeStamp[i])
-                tail = (head + tail) / 2;
-            else
-                break;
-        }
-        if (timeStamp[i] < rt)
-            i = i + 1;
-        return i;
+        List<int> ret = new List<int>();
+        int rt = t + range;
+        if (timeStamp[0] > rt)
+            return ret;
+        int lowPoint = BinarySearch(timeStamp, t);
+        int highPoint = BinarySearch(timeStamp, rt);
+        lowPoint += timeStamp[lowPoint] < t ? 1 : 0;
+        highPoint -= timeStamp[highPoint] > rt ? 1 : 0;
+        if (lowPoint < 0)
+            lowPoint = 0;
+        for(int i = lowPoint; i <= highPoint; i++)
+            ret.Add(i);
+
+        return ret;
     }
 
-    private void addNote(int t, NoteType type, int blockID, Axis a, int duration)
+    private int BinarySearch(List<int> data, int a)
+    {
+        int low = 0;
+        int high = data.Count - 1;
+        int mid = -1;
+
+        while(low <= high)
+        {
+            mid = (low + high) / 2;
+
+            if (data[mid] == a)
+                return mid;
+            else if (data[mid] > a)
+                high = mid - 1;
+            else if (data[mid] < a)
+                low = mid + 1;
+        }
+        return mid;
+    }
+
+    public void addNote(int t,int blockID, Axis a)
     {
         Note nt = new Note();
-        nt.type = type;
+        nt.type = NoteType.Note;
         nt.id = blockID;
-        nt.dir = 
-        bm.addNote(t, blockID, a);
-        Note nt
-        int index = getTimeRangeIndex(t, 0); 
+        Direction dirs = DirectionMap.instance.dirMap[blockID];
+        Direction dir = Direction.illegal;
+        switch (a)
+        {
+            case Axis.x:
+                dir = dirs & (Direction.xplus | Direction.xminus);
+                break;
+            case Axis.y:
+                dir = dirs & (Direction.yplus | Direction.yminus);
+                break;
+            case Axis.z:
+                dir = dirs & (Direction.zplus | Direction.zminus);
+                break;
+            default:
+                break;
+        }
+        if (dir == Direction.illegal)
+            return;
+        nt.dir = dir;
+        add2Notes(t, nt);
+    }
+    public void addSlider(int t, int layerID, Direction dir, int duration)
+    {
+        Note nt = new Note();
+        nt.type = NoteType.Slider;
+        nt.id = layerID;
+        nt.dir = dir;
+        nt.duration = duration;
+        add2Notes(t, nt);
+        Slider sld = new Slider();
+        sld.nt = nt;
+        sld.start = t;
+        sld.end = t + duration;
+        add2Sliders(sld);
+    }
+    private void add2Notes(int t, Note nt)
+    {
+        int index = BinarySearch(timeStamp, t);
         if (!timeStamp.Contains(t))
         {
             timeStamp.Insert(index, t);
@@ -559,14 +710,19 @@ public class MagiCube : MonoBehaviour
         else
         {
             notes[t].Add(nt);
-        }      
+        }
+    }
+    private void add2Sliders(Slider sld)
+    {
+        sliders.Add(sld);
+        sliders.Sort();
+        printSliders();
     }
     private void deleteNote(int t, Note nt)
     {
         if (!timeStamp.Contains(t))
             return;
-        bm.deleteNote(t, nt);
-        int index = getTimeRangeIndex(t, 0);
+        int index = BinarySearch(timeStamp, t);
         notes[t].Remove(nt);
         if (notes[t].Count == 0)
         {
@@ -574,9 +730,17 @@ public class MagiCube : MonoBehaviour
             timeStamp.Remove(t);
         } 
     }
+    // for debug
+    private void printSliders()
+    {
+        foreach(Slider sld in sliders)
+        {
+            Debug.Log("start: " + sld.start + "/ end: " + sld.end);
+        }
+    }
     private void SyncNote() // 强制同步beatMap中的notes和MagiCube中保存notes的数据结构
     {
-        return;
+        bm.notes = notes;
     }
 
     public void saveBeatMap()
@@ -603,6 +767,19 @@ public class MagiCube : MonoBehaviour
         BlockIndex bi = new BlockIndex(id / 9, (id % 9) / 3, id % 3);
         return bi;
     } 
+
+    private void resetBlockPosition()
+    {
+        if (squareBlock == null)
+            return;
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                for (int k = 0; k < 3; k++)
+                {
+                    squareBlock[i, j, k].block.transform.position = initialBlockPosition[i, j, k];
+                    squareBlock[i, j, k].block.transform.rotation = Quaternion.identity;
+                }
+    }
 
     private float getAppTime(float ar)
     {

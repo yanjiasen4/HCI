@@ -26,6 +26,7 @@ namespace MusiCube
         public GameObject yminusPlane;
         public GameObject zplusPlane;
         public GameObject zminusPlane;
+
         // Use this for initialization
         void Start()
         {
@@ -39,6 +40,16 @@ namespace MusiCube
             zminusPlane = GameObject.Find("Plane1");
             */
             //autoPlay(CubeState.select);
+        }
+
+        public void setDropTime(float t)
+        {
+            xplusPlane.GetComponent<PlaneAnime>().raiseTime = t;
+            xminusPlane.GetComponent<PlaneAnime>().raiseTime = t;
+            yplusPlane.GetComponent<PlaneAnime>().raiseTime = t;
+            yminusPlane.GetComponent<PlaneAnime>().raiseTime = t;
+            zplusPlane.GetComponent<PlaneAnime>().raiseTime = t;
+            zminusPlane.GetComponent<PlaneAnime>().raiseTime = t;
         }
 
         //播放选中动画
@@ -137,6 +148,41 @@ namespace MusiCube
                 default:
                     break;
             }
+        }
+        public void playPlaneRaiseStaticly(MusiCube.Direction dir, float time)
+        {
+            switch (dir)
+            {
+                case Direction.xplus:
+                    xplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.xminus:
+                    xminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.yplus:
+                    yplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.yminus:
+                    yminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.zplus:
+                    zplusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                case Direction.zminus:
+                    zminusPlane.GetComponent<PlaneAnime>().playRaise(time);
+                    break;
+                default:
+                    break;
+            }
+        }
+        public void playPlaneClearStaticly()
+        {
+            xplusPlane.GetComponent<PlaneAnime>().StateSwitch(PlAnimeType.none);
+            xminusPlane.GetComponent<PlaneAnime>().StateSwitch(PlAnimeType.none);
+            yplusPlane.GetComponent<PlaneAnime>().StateSwitch(PlAnimeType.none);
+            yminusPlane.GetComponent<PlaneAnime>().StateSwitch(PlAnimeType.none);
+            zplusPlane.GetComponent<PlaneAnime>().StateSwitch(PlAnimeType.none);
+            zminusPlane.GetComponent<PlaneAnime>().StateSwitch(PlAnimeType.none);
         }
 
         public void autoPlayRotate(Vector3 point, Vector3 axis, float angle, float t, float delay)

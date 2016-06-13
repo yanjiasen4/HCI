@@ -13,6 +13,9 @@ public class MapMaker : MonoBehaviour {
     public Text timeText; // show current timestap
     public Text divisorText; // show current divisor
 
+    public Graphic notesBar; // notes bar
+    public UIIdxView ud;
+
     public MagiCube mc;
 
     // 节拍
@@ -46,6 +49,7 @@ public class MapMaker : MonoBehaviour {
         }
         timeSlice = CalculateTimeSlice();
         startTime = CalculateStartTime();
+        initNotesBar();
     }
 
     IEnumerator SetMusic()
@@ -62,6 +66,12 @@ public class MapMaker : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         SetUIText();
+        int realTime = (int)System.Math.Ceiling((double)(currTime * 1000));
+        if ((int)realTime % timeSlice != 0)
+            realTime -= 1;
+        notesBar.GetComponent<UIIdxView>().curTime = realTime;
+
+
         //UpdateSliceCount();
         // Music play or pause
         if (Input.GetKeyDown(KeyCode.Space))
@@ -79,8 +89,6 @@ public class MapMaker : MonoBehaviour {
                 mc.music.Pause();
             }
         }
-
-        
 
         // play finished
         if(!mc.isPaused && !mc.music.isPlaying)
@@ -151,20 +159,54 @@ public class MapMaker : MonoBehaviour {
 
         if(isSelected)
         {
-            if (Input.GetKey(KeyCode.X))
+            if (Input.GetKeyUp(KeyCode.X))
             {
                 print(selectedBlockID + " x");
-                mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.x);
+                mc.addNote(GetTimeMsInt(), selectedBlockID, Axis.x);
+                //mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.x);
             }
-            else if (Input.GetKey(KeyCode.Y))
+            else if (Input.GetKeyUp(KeyCode.Y))
             {
                 print(selectedBlockID + " y");
-                mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.y);
+                mc.addNote(GetTimeMsInt(), selectedBlockID, Axis.y);
+                //mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.y);
             }
-            else if (Input.GetKey(KeyCode.Z))
+            else if (Input.GetKeyUp(KeyCode.Z))
             {
                 print(selectedBlockID + " z");
-                mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.z);
+                mc.addNote(GetTimeMsInt(), selectedBlockID, Axis.z);
+                //mc.bm.addNote(GetTimeMsInt(), selectedBlockID, Axis.z);
+            }
+            // Silder
+            else if(Input.GetKeyUp(KeyCode.Alpha1))
+            {
+                print(selectedBlockID / 9 + "xplus");
+                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.xplus, 1000);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha2))
+            {
+                print(selectedBlockID / 9 + "xminus");
+                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.xminus, 1000);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha3))
+            {
+                print(selectedBlockID / 9 + "yplus");
+                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.yplus, 1000);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha4))
+            {
+                print(selectedBlockID / 9 + "yminus");
+                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.yminus, 1000);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha5))
+            {
+                print(selectedBlockID / 9 + "zplus");
+                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.zplus, 1000);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha6))
+            {
+                print(selectedBlockID / 9 + "zminus");
+                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.zminus, 1000);
             }
         }
     }
@@ -172,6 +214,17 @@ public class MapMaker : MonoBehaviour {
     void FixedUpdate()
     {
 
+    }
+
+    private void initNotesBar()
+    {
+        ud = notesBar.GetComponent<UIIdxView>();
+        ud.curTime = 0;
+        ud.bpm = mc.bm.GetBpm();
+        ud.offSet = mc.bm.GetOffset();
+        ud.divide = divisorArray[beatSnapDivisor];
+        ud.notes = mc.notes;
+        ud.timestamps = mc.timeStamp;
     }
 
     private void SetUIText()
@@ -286,14 +339,12 @@ public class MapMaker : MonoBehaviour {
     void beatBack()
     {
         float t = currTime;
-        print(t);
-        print(sliceCount * timeSlice + startTime);
-        print(t - (sliceCount * timeSlice + startTime));
-        if(t <= startTime)
+        float currTimePoint = timeSlice * sliceCount + startTime;
+        if (t <= startTime)
         {
             t = 0;
         }
-        else if (sliceCount > 0 && t == timeSlice*sliceCount + startTime)
+        else if (sliceCount > 0 && (t > currTime-0.001f && t < currTime+0.001f) )
         {
             sliceCount--;
             t -= timeSlice;

@@ -247,26 +247,20 @@ namespace MusiCube
             }
         }
 
-        void StateSwitch(PlAnimeType nType)
+        public void StateSwitch(PlAnimeType nType)
         {
             if(anime == nType)
             {
                 return;
             }   
-            switch (anime)
+            for(int i = 0; i < dropPlanes.Length; i++)
             {
-                case PlAnimeType.raise:
-                    for(int i = 0; i < dropPlanes.Length; i++)
-                    {
-                        dropPlanes[i].SetActive(false);
-                    }
-                    break;
-                case PlAnimeType.perfect:
-                case PlAnimeType.good:
-                case PlAnimeType.normal:
-                    pressLight.SetActive(false);
-                    break;
+                dropPlanes[i].SetActive(false);
             }
+            plane.transform.localPosition = new Vector3(0, 0, 0);
+            plane.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", null);
+                    
+            pressLight.SetActive(false);
             switch (nType)
             {
                 case PlAnimeType.raise:

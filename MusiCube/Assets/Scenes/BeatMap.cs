@@ -168,6 +168,12 @@ namespace MusiCube
          * public API 
          */
         /* Get & Set function */
+        public SortedDictionary<int, List<Note>> notes
+        {
+            get { return tl.notes; }
+            set { tl.notes = value; }
+        }
+
         public SortedDictionary<int, List<Note>> getNotes()
         {
             return tl.notes;
@@ -188,6 +194,7 @@ namespace MusiCube
         {
             tl.offset = offset;
         }
+        
 
         /* Read and Write file function */
         public void readFromFile(string filename)
@@ -248,6 +255,16 @@ namespace MusiCube
             nt.dir = dir;
             nt.duration = 0;
             PrintNote(nt);
+            bool r = tl.addNote(t, nt);
+            return r;
+        }
+        public bool addSlider(int t, int layerID, Direction dir, int duration)
+        {
+            Note nt = new Note();
+            nt.type = NoteType.Slider;
+            nt.id = layerID;
+            nt.dir = dir;
+            nt.duration = duration;
             bool r = tl.addNote(t, nt);
             return r;
         }

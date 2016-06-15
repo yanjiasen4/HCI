@@ -80,7 +80,7 @@ namespace MusiCube
             int idxEnd = (int)(idx + ((width / 2 + offsetW) / beatWidth + 1));
 
 
-            if (timestamps != null && notes != null)
+            if (timestamps != null && notes != null && timestamps.Count != 0)
             {
                 int timestampIdxBegin = findIdx((int)(idxBegin * timeGap));
                 int timestampIdxEnd = findIdx((int)(idxEnd * timeGap));

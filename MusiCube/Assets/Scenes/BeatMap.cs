@@ -32,17 +32,17 @@ namespace MusiCube
         public Direction[] dirMap;
         private DirectionMap()
         {
-            dirMap = new Direction[26];
-            for (int i = 0; i < 26; i++)
+            dirMap = new Direction[27];
+            for (int i = 0; i < 27; i++)
             {
                 dirMap[i] = 0x0;
             }
-            int[] xplusBlock  = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-            int[] xminusBlock = { 18, 19, 20, 21, 24 };
-            int[] yplusBlock  = { 0, 1, 2, 9, 10, 11, 18, 19, 20 };
-            int[] yminusBlock = { 6, 7, 8, 15, 24 };
-            int[] zplusBlock  = { 0, 3, 6, 9, 12, 15, 18, 21, 24 };
-            int[] zminusBlock = { 2, 5, 8, 11, 20 };
+            int[] xplusBlock  = { 0, 3, 6, 9, 12, 15, 18, 21, 24 };
+            int[] xminusBlock = { 2, 5, 8, 11, 14, 17, 20, 23, 26 };
+            int[] yplusBlock  = { 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+            int[] yminusBlock = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+            int[] zplusBlock  = { 0, 1, 2, 9, 10, 11, 18, 19, 20 };
+            int[] zminusBlock = { 6, 7, 8, 15, 16, 17, 24, 25, 26 };
             List<int[]> dirArray = new List<int[]>();
             dirArray.Add(xplusBlock);
             dirArray.Add(xminusBlock);

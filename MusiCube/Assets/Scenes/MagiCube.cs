@@ -14,6 +14,7 @@ public class MagiCube : MonoBehaviour
         Edit
     }
     public GameObject block;
+    public GameObject layer;
     public float blockSize = 0.05f;
     public Material activeMt;
     public Material inActiveMt;
@@ -22,8 +23,9 @@ public class MagiCube : MonoBehaviour
     BlockStatus[,,] squareBlock = new BlockStatus[3, 3, 3];
     Vector3[,,] initialBlockPosition = new Vector3[3, 3, 3];
     public float timeCount = 0;
-    int noteCount = 0;
+    public int noteCount = 0;
     public SortedDictionary<int, List<Note>> notes = new SortedDictionary<int, List<Note>>();
+    // 定义Slider为可比较类型并重载比较方法
     public class Slider : IComparable
     {
         public int start;
@@ -50,8 +52,8 @@ public class MagiCube : MonoBehaviour
     public List<Slider> sliders = new List<Slider>();
 
     public List<int> timeStamp = new List<int>();
-    List<Note> currentNotes = new List<Note>();
-    List<Note> nextNotes = new List<Note>();
+    public List<Note> currentNotes = new List<Note>();
+    public List<Note> nextNotes = new List<Note>();
     bool isOver = false;
     public GameState state;
     public bool isPaused = false;
@@ -70,9 +72,10 @@ public class MagiCube : MonoBehaviour
     string blockPath = "MagiCube/";
     public BeatMap bm;
 
-    public float appTime; // 缩圈时间/s
-    public float judgeRange; // 判定范围/s
+    public float appTime; // 缩圈时间/ms
+    public float judgeRange; // 判定范围/ms
 
+    // 缩圈时间数组
     private float[] appTimeTable =
     {
         1800,1680,1560,1440,1320,1200,1050,900,750,600,450
@@ -96,16 +99,18 @@ public class MagiCube : MonoBehaviour
         appTime = getAppTime(bm.ar);
         judgeRange = getJudgeRange(bm.od);
         recordBlockPosition();
+        setDropTime(appTime/1000);
     }
 
     // Use WWW to asynchronously load a music resource
     IEnumerator LoadMusic()
     {
+        
         string songPath = "Songs/" + songName + "/" + songName + ".mp3";
         string beatmapPath = "Songs/" + songName + "/" + songName + ".mcb";
         songFullPathAndName = "file:///" + System.IO.Path.Combine(Application.streamingAssetsPath, songPath);
         beatmapFullPathAndName = System.IO.Path.Combine(Application.streamingAssetsPath, beatmapPath);
-
+       
         www = new WWW(songFullPathAndName);
         yield return www;
 
@@ -133,41 +138,45 @@ public class MagiCube : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (www == null || !isDone)
+           return;
         switch(state)
         {
             // 正常播放，可以从任意时间戳开始
             case GameState.Play:
                 {
                     // update time
-                    timeCount += Time.deltaTime;
-
-                    // Game over
-                    if (noteCount >= timeStamp.Count)
+                   
+                    if (timeStamp.Count == 0)
+                        break;
+                    clearBlockAnimation();
+                    resetBlockPosition();
+                    int timeMs = (int)(timeCount * 1000);
+                    if (timeMs > timeStamp[timeStamp.Count - 1])
+                        break;
+                    List<int> notesIndex = getTimeRangeNoteIndex(timeMs, (int)appTime);
+                    List<Slider> slidersRender = getTimeRangeSlider(timeMs, (int)appTime);
+                    foreach (int i in notesIndex)
                     {
-                        return;
-                    }
-                    // render notes
-                    else
-                    {
-                        int timeMs = (int)(timeCount * 1000);
-                        if (timeMs >= timeStamp[noteCount]+bm.GetOffset() - appTime)
+                        foreach (Note nt in notes[timeStamp[i]])
                         {
-                            foreach (Note nt in currentNotes)
-                            {
-                                renderNote(nt);
-                            }
-                            // update notes
-                            currentNotes = nextNotes;
-                            if (++noteCount >= timeStamp.Count)
-                                return;
-                            nextNotes = notes[timeStamp[noteCount]];
+                            renderSingleNoteStaticly(nt, timeStamp[i], timeMs);
                         }
                     }
+
+                    foreach (Slider sld in slidersRender)
+                    {
+                        renderSingleSliderStaticly(sld.nt, sld.start, sld.end, timeMs);
+                    }
+
+                    timeCount += Time.deltaTime > 0.1f ? 0 : Time.deltaTime;
                     break;
                 }
             // 编辑模式，画面静止
             case GameState.Edit:
                 {
+                    if (timeStamp.Count == 0)
+                        break;
                     clearBlockAnimation();
                     resetBlockPosition();
                     int timeMs = (int)(timeCount * 1000);
@@ -185,7 +194,6 @@ public class MagiCube : MonoBehaviour
                     
                     foreach(Slider sld in slidersRender)
                     {
-                        print("!");
                         renderSingleSliderStaticly(sld.nt, sld.start, sld.end, timeMs);
                     }
 
@@ -209,7 +217,7 @@ public class MagiCube : MonoBehaviour
         foreach(Slider sld in sliders)
         {
             if (sld.start - appTime > timeMs || sld.end < timeMs)
-                break;
+                continue;
             if (sld.start - appTime < timeMs && sld.end > timeMs)
                 ret.Add(sld);
         }
@@ -432,9 +440,6 @@ public class MagiCube : MonoBehaviour
         {
             case NoteType.Note:
                 {
-                    //BlockStatus target;
-                   // BlockIndex bi = getBlockIndex(nt.id);
-                   // target = squareBlock[bi.x, bi.y, bi.z];
                     renderSingleNote(nt);
                     break;
                 }
@@ -470,8 +475,11 @@ public class MagiCube : MonoBehaviour
         BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
         Vector3 rotateDir = getSliderRotateDirection(dir);
         Vector3 centerPoint = squareBlock[centerIndex.x,centerIndex.y,centerIndex.z].block.transform.position;
-        List<int> BIList = new List<int>();
-        //GameObject sliderAnimation = Instantiate();
+
+        GameObject sliderAnimation = Instantiate(layer, centerPoint, Quaternion.identity) as GameObject;
+        sliderAnimation.GetComponent<RowAnime>().Initiate();
+        sliderAnimation.GetComponent<RowAnime>().raiseTime = appTime / 1000;
+        sliderAnimation.GetComponent<RowAnime>().autoPlay(RowState.raise);
         for(int i = 0; i < 9; i++)
         {
             int beforeIndex = blocksBefore[i];
@@ -479,16 +487,17 @@ public class MagiCube : MonoBehaviour
             GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
             // 总是旋转90度
             blk.GetComponent<SelectAnime>().autoPlayRotate(centerPoint, rotateDir, 90f, duration, appTime);
-            BIList.Add(afterIndex);
         }
         // Update blockPos
-    
-        for(int i = 0; i < 9; i++)
+        resetBlockPosition();
+        /*
+        for (int i = 0; i < 9; i++)
         {
             int beforeIndex = blocksBefore[i];
             BlockIndex bi = getBlockIndex(beforeIndex);
             squareBlock[bi.x, bi.y, bi.z].block.name = BIList[i].ToString();
         }
+        */
     }
 
     private Vector3 getSliderRotateDirection(Direction dir)
@@ -497,11 +506,11 @@ public class MagiCube : MonoBehaviour
         switch(dir)
         {
             case Direction.xplus:
-                ret = Vector3.forward + Vector3.left;
+                ret = Vector3.forward;
                 ret.Normalize();
                 break;
             case Direction.xminus:
-                ret = Vector3.back + Vector3.right;
+                ret = Vector3.back;
                 ret.Normalize();
                 break;
             case Direction.yplus:
@@ -511,11 +520,11 @@ public class MagiCube : MonoBehaviour
                 ret = Vector3.down;
                 break;
             case Direction.zplus:
-                ret = Vector3.forward + Vector3.right;
+                ret = Vector3.right;
                 ret.Normalize();
                 break;
             case Direction.zminus:
-                ret = Vector3.back + Vector3.left;
+                ret = Vector3.left;
                 ret.Normalize();
                 break;
             default:
@@ -702,7 +711,8 @@ public class MagiCube : MonoBehaviour
         int index = BinarySearch(timeStamp, t);
         if (!timeStamp.Contains(t))
         {
-            timeStamp.Insert(index, t);
+            timeStamp.Add(t);
+            timeStamp.Sort();
             List<Note> temp = new List<Note>();
             temp.Add(nt);
             notes.Add(t, temp);
@@ -747,6 +757,14 @@ public class MagiCube : MonoBehaviour
     {
         if (songFullPathAndName != null)
             bm.writeToFile(beatmapFullPathAndName);
+    }
+
+    public void setDropTime(float t)
+    {
+        foreach(BlockStatus blk in squareBlock)
+        {
+            blk.block.GetComponent<SelectAnime>().setDropTime(t);
+        }
     }
 
     public struct BlockIndex

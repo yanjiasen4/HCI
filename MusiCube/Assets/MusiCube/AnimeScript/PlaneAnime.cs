@@ -41,7 +41,7 @@ namespace MusiCube
         //for auto play anime
         private float curTime = 0;
         public float testTime = 10;
-        public float raiseTime = 1;
+        public float raiseTime = 0.1f;
         public float sRaiseTime = 1;
         public float failTime = 0.4f;
         public float perfectTime = 0.4f;

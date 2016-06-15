@@ -18,6 +18,13 @@ public class MapMaker : MonoBehaviour {
 
     public MagiCube mc;
 
+    public float seekContinuousTrigleTime;
+    public float seekMinTime;
+    public float seekTrigleCount = 0;
+    public float seekCount = 0;
+
+    public float playbackSpeed = 1f;
+
     // 节拍
     int beatSnapDivisor = 3;
     int[] divisorArray =
@@ -47,6 +54,9 @@ public class MapMaker : MonoBehaviour {
         {
             bpmInput.gameObject.SetActive(true);
         }
+
+        seekContinuousTrigleTime = 0.2f;
+        seekMinTime = 40f;
         timeSlice = CalculateTimeSlice();
         startTime = CalculateStartTime();
         initNotesBar();
@@ -110,6 +120,18 @@ public class MapMaker : MonoBehaviour {
         else if(Input.GetKeyDown(KeyCode.LeftArrow))
         {
             beatBack();
+        }
+        if(Input.GetKey(KeyCode.RightArrow))
+        {
+            beatForwardContinuous();
+        }
+        else if(Input.GetKey(KeyCode.LeftArrow))
+        {
+            beatBakcContinuous();
+        }
+        if(Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.LeftArrow) )
+        {
+            seekTrigleCount = 0;
         }
 
         // select block to edit
@@ -262,6 +284,7 @@ public class MapMaker : MonoBehaviour {
             mc.music.time = t;
         }
         currTime = t;
+        sliceCount = (int)Mathf.Round((currTime - startTime) / timeSlice);
     }
     public void SetBeatSnapDivisor(float divisor)
     {
@@ -329,7 +352,7 @@ public class MapMaker : MonoBehaviour {
         else if (sliceCount + 1 < maxSlice)
         {
             sliceCount++;
-            t += timeSlice;
+            t = timeSlice * sliceCount + startTime;
         }
         currTime = t;
         mc.SetTime(t);
@@ -347,7 +370,7 @@ public class MapMaker : MonoBehaviour {
         else if (sliceCount > 0 && (t > currTime-0.001f && t < currTime+0.001f) )
         {
             sliceCount--;
-            t -= timeSlice;
+            t = timeSlice * sliceCount + startTime;
         }
         else
         {
@@ -358,5 +381,36 @@ public class MapMaker : MonoBehaviour {
         mc.music.time = t;
         tl.value = t;
     }
-
+    void beatForwardContinuous()
+    {
+        if (seekTrigleCount < seekContinuousTrigleTime)
+            seekTrigleCount += Time.deltaTime;
+        else {
+            if (seekCount >= seekMinTime)
+            {
+                beatForward();
+                seekCount = 0;
+            }
+            else
+                seekCount += 1000 * Time.deltaTime;
+        }
+    }
+    void beatBakcContinuous()
+    {
+        if (seekTrigleCount < seekContinuousTrigleTime)
+            seekTrigleCount += Time.deltaTime;
+        else {
+            if (seekCount >= seekMinTime)
+            {
+                beatBack();
+                seekCount = 0;
+            }
+            else
+                seekCount += 1000 * Time.deltaTime;
+        }
+    }
+    public void SetPlaybackSpeed(float input)
+    {
+        playbackSpeed = input;
+    }
 }

@@ -153,6 +153,7 @@
     <Compile Include="Assets\Scenes\AudioLoader.cs" />
     <Compile Include="Assets\Scenes\BeatMap.cs" />
     <Compile Include="Assets\Scenes\Block.cs" />
+    <Compile Include="Assets\Scenes\GameManager.cs" />
     <Compile Include="Assets\Scenes\MagiCube.cs" />
     <Compile Include="Assets\Scenes\MapMaker.cs" />
     <Compile Include="Assets\Scenes\buttomClick.cs" />

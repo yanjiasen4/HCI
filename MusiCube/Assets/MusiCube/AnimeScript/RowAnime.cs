@@ -37,8 +37,14 @@ namespace MusiCube
         public float failTime = 1;
         void Start()
         {
+
+            //autoPlay(RowState.pulling);
+        }
+
+        public void Initiate()
+        { 
             heightOffset = 1.5f * cubeSize + gap + hintHeight;
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 subPlanes[i] = Instantiate(AnimeResource.instance.rowSubPlane) as GameObject;
                 subPlanes[i].transform.parent = transform;
@@ -47,7 +53,7 @@ namespace MusiCube
                 subPlanes[i].SetActive(false);
             }
 
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 subPlanes[i + 3] = Instantiate(AnimeResource.instance.rowSubPlane) as GameObject;
                 subPlanes[i + 3].transform.parent = transform;
@@ -57,7 +63,7 @@ namespace MusiCube
                 subPlanes[i + 3].transform.localRotation = tempR;
                 subPlanes[i + 3].SetActive(false);
             }
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 subPlanes[i + 6] = Instantiate(AnimeResource.instance.rowSubPlane) as GameObject;
                 subPlanes[i + 6].transform.parent = transform;
@@ -67,7 +73,7 @@ namespace MusiCube
                 subPlanes[i + 6].transform.localRotation = tempR;
                 subPlanes[i + 6].SetActive(false);
             }
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 subPlanes[i + 9] = Instantiate(AnimeResource.instance.rowSubPlane) as GameObject;
                 subPlanes[i + 9].transform.parent = transform;
@@ -77,7 +83,7 @@ namespace MusiCube
                 subPlanes[i + 9].transform.localRotation = tempR;
                 subPlanes[i + 9].SetActive(false);
             }
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 hintPlanes[i] = Instantiate(AnimeResource.instance.rowHintPlane) as GameObject;
                 movePlanes[i] = Instantiate(AnimeResource.instance.rowMovePlane) as GameObject;
@@ -105,7 +111,6 @@ namespace MusiCube
             rotate.eulerAngles = new Vector3(0, 0, -270);
             movePlanes[3].transform.localRotation = rotate;
             hintPlanes[3].transform.localRotation = rotate;
-            autoPlay(RowState.pulling);
         }
 
         public void autoPlay(RowState type)

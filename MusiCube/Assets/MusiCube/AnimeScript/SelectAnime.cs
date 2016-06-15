@@ -200,6 +200,7 @@ namespace MusiCube
             float currTime = 0;
             while(currTime < t)
             {
+                print(currTime);
                 float dt = Time.deltaTime;
                 playRotate(point, axis, angle * dt/t);
                 currTime += dt;

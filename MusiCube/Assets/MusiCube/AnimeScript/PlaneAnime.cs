@@ -144,7 +144,7 @@ namespace MusiCube
             float height = Mathf.Lerp(keyHeight, 0, time);
             plane.transform.localPosition = new Vector3(0, height, 0);
 
-            //Debug.Log("play fail");
+            //Debug.Log("play fail:"+time);
         }
 
         //缩圈动画
@@ -249,11 +249,13 @@ namespace MusiCube
 
         public void StateSwitch(PlAnimeType nType)
         {
+           
             if(anime == nType)
             {
                 return;
-            }   
-            for(int i = 0; i < dropPlanes.Length; i++)
+            }
+
+            for (int i = 0; i < dropPlanes.Length; i++)
             {
                 dropPlanes[i].SetActive(false);
             }

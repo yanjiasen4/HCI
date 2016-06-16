@@ -142,18 +142,26 @@ public class MagiCube : MonoBehaviour
            return;
         switch(state)
         {
-            // 正常播放，可以从任意时间戳开始
+            // 游戏模式
             case GameState.Play:
                 {
                     // update time
-                   
-                    if (timeStamp.Count == 0)
-                        break;
                     clearBlockAnimation();
                     resetBlockPosition();
-                    int timeMs = (int)(timeCount * 1000);
-                    if (timeMs > timeStamp[timeStamp.Count - 1])
+                    if (timeStamp.Count == 0 || noteCount >timeStamp.Count)
                         break;
+                    int timeMs = (int)(timeCount * 1000);
+                   // if (timeMs > timeStamp[timeStamp.Count - 1] + 10000f)
+                   //     break;
+                    if(timeMs - judgeRange > timeStamp[noteCount])
+                    {
+                        if (noteCount < timeStamp.Count - 1)
+                        {
+                            noteCount++;
+                            currentNotes = nextNotes;
+                            nextNotes = notes[timeStamp[noteCount]];
+                        }
+                    }
                     List<int> notesIndex = getTimeRangeNoteIndex(timeMs, (int)appTime);
                     List<Slider> slidersRender = getTimeRangeSlider(timeMs, (int)appTime);
                     foreach (int i in notesIndex)
@@ -471,7 +479,6 @@ public class MagiCube : MonoBehaviour
         Direction dir = nt.dir;
         float duration = nt.duration / 1000f;
         int[] blocksBefore = getSliderIndex(dir, layerID);
-        int[] blocksAfter = getSliderReplaceIndex(dir, layerID);
         BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
         Vector3 rotateDir = getSliderRotateDirection(dir);
         Vector3 centerPoint = squareBlock[centerIndex.x,centerIndex.y,centerIndex.z].block.transform.position;
@@ -483,8 +490,7 @@ public class MagiCube : MonoBehaviour
         for(int i = 0; i < 9; i++)
         {
             int beforeIndex = blocksBefore[i];
-            int afterIndex = blocksAfter[i];
-            GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
+            GameObject blk = getBlockById(beforeIndex);
             // 总是旋转90度
             blk.GetComponent<SelectAnime>().autoPlayRotate(centerPoint, rotateDir, 90f, duration, appTime);
         }
@@ -757,6 +763,12 @@ public class MagiCube : MonoBehaviour
     {
         if (songFullPathAndName != null)
             bm.writeToFile(beatmapFullPathAndName);
+    }
+
+    public GameObject getBlockById(int id)
+    {
+        GameObject blk = GameObject.Find(blockPath + id.ToString()) as GameObject;
+        return blk;
     }
 
     public void setDropTime(float t)

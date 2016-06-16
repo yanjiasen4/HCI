@@ -27,19 +27,12 @@ namespace MusiCube
         public GameObject zplusPlane;
         public GameObject zminusPlane;
 
+        public bool feedback = false;
+
         // Use this for initialization
         void Start()
         {
             originColor = corner.GetComponent<MeshRenderer>().material.color;
-            /*
-            xplusPlane = GameObject.Find("Plane3");
-            xminusPlane = GameObject.Find("Plane4");
-            yplusPlane = GameObject.Find("Plane2");
-            yminusPlane = GameObject.Find("Plane0");
-            zplusPlane = GameObject.Find("Plane5");
-            zminusPlane = GameObject.Find("Plane1");
-            */
-            //autoPlay(CubeState.select);
         }
 
         public void setDropTime(float t)
@@ -113,6 +106,8 @@ namespace MusiCube
 
         public void playPlaneRaise(MusiCube.Direction dir, float time)
         {
+            if (feedback)
+                return;
             switch(dir)
             {
                 case Direction.xplus:
@@ -175,6 +170,136 @@ namespace MusiCube
                     break;
             }
         }
+
+        public void playPlaneFeedback(Direction dir, PlAnimeType pt, float time)
+        {
+            switch(pt)
+            {
+                case PlAnimeType.perfect:
+                    playPlanePerfect(dir, time);
+                    break;
+                case PlAnimeType.good:
+                    playPlaneGood(dir, time);
+                    break;
+                case PlAnimeType.normal:
+                    playPlaneNormal(dir, time);
+                    break;
+                case PlAnimeType.fail:
+                    playPlaneFailed(dir, time);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void playPlanePerfect(Direction dir, float time)
+        {
+            switch (dir)
+            {
+                case Direction.xplus:
+                    xplusPlane.GetComponent<PlaneAnime>().playPerfect(time);
+                    break;
+                case Direction.xminus:
+                    xminusPlane.GetComponent<PlaneAnime>().playPerfect(time);
+                    break;
+                case Direction.yplus:
+                    yplusPlane.GetComponent<PlaneAnime>().playPerfect(time);
+                    break;
+                case Direction.yminus:
+                    yminusPlane.GetComponent<PlaneAnime>().playPerfect(time);
+                    break;
+                case Direction.zplus:
+                    zplusPlane.GetComponent<PlaneAnime>().playPerfect(time);
+                    break;
+                case Direction.zminus:
+                    zminusPlane.GetComponent<PlaneAnime>().playPerfect(time);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        public void playPlaneGood(Direction dir, float time)
+        {
+            switch (dir)
+            {
+                case Direction.xplus:
+                    xplusPlane.GetComponent<PlaneAnime>().playGood(time);
+                    break;
+                case Direction.xminus:
+                    xminusPlane.GetComponent<PlaneAnime>().playGood(time);
+                    break;
+                case Direction.yplus:
+                    yplusPlane.GetComponent<PlaneAnime>().playGood(time);
+                    break;
+                case Direction.yminus:
+                    yminusPlane.GetComponent<PlaneAnime>().playGood(time);
+                    break;
+                case Direction.zplus:
+                    zplusPlane.GetComponent<PlaneAnime>().playGood(time);
+                    break;
+                case Direction.zminus:
+                    zminusPlane.GetComponent<PlaneAnime>().playGood(time);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void playPlaneNormal(Direction dir, float time)
+        {
+            switch (dir)
+            {
+                case Direction.xplus:
+                    xplusPlane.GetComponent<PlaneAnime>().playNormal(time);
+                    break;
+                case Direction.xminus:
+                    xminusPlane.GetComponent<PlaneAnime>().playNormal(time);
+                    break;
+                case Direction.yplus:
+                    yplusPlane.GetComponent<PlaneAnime>().playNormal(time);
+                    break;
+                case Direction.yminus:
+                    yminusPlane.GetComponent<PlaneAnime>().playNormal(time);
+                    break;
+                case Direction.zplus:
+                    zplusPlane.GetComponent<PlaneAnime>().playNormal(time);
+                    break;
+                case Direction.zminus:
+                    zminusPlane.GetComponent<PlaneAnime>().playNormal(time);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void playPlaneFailed(Direction dir, float time)
+        {
+            switch (dir)
+            {
+                case Direction.xplus:
+                    xplusPlane.GetComponent<PlaneAnime>().playFail(time);
+                    break;
+                case Direction.xminus:
+                    xminusPlane.GetComponent<PlaneAnime>().playFail(time);
+                    break;
+                case Direction.yplus:
+                    yplusPlane.GetComponent<PlaneAnime>().playFail(time);
+                    break;
+                case Direction.yminus:
+                    yminusPlane.GetComponent<PlaneAnime>().playFail(time);
+                    break;
+                case Direction.zplus:
+                    zplusPlane.GetComponent<PlaneAnime>().playFail(time);
+                    break;
+                case Direction.zminus:
+                    zminusPlane.GetComponent<PlaneAnime>().playFail(time);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public void playPlaneClearStaticly()
         {
             xplusPlane.GetComponent<PlaneAnime>().StateSwitch(PlAnimeType.none);

@@ -150,6 +150,7 @@
     <Compile Include="Assets\MusiCube\AnimeScript\PlaneAnime.cs" />
     <Compile Include="Assets\MusiCube\AnimeScript\RowAnime.cs" />
     <Compile Include="Assets\MusiCube\AnimeScript\SelectAnime.cs" />
+    <Compile Include="Assets\MusiCube\AnimeScript\TestAnime.cs" />
     <Compile Include="Assets\Scenes\AudioLoader.cs" />
     <Compile Include="Assets\Scenes\BeatMap.cs" />
     <Compile Include="Assets\Scenes\Block.cs" />

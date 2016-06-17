@@ -579,16 +579,12 @@ public class MagiCube : MonoBehaviour
     {
         if (nt.type != NoteType.Slider)
             return;
-        if(t <= noteTime - appTime || t >= endTime)
+        if (t <= noteTime - appTime || t >= endTime)
         {
             return;
         }
         // 缩圈
-        if (t > noteTime - appTime && t <= noteTime)
-        {
-
-        }
-        else if (t > noteTime && t < endTime)
+        else
         {
             int layerID = nt.id;
             Direction dir = nt.dir;
@@ -598,17 +594,26 @@ public class MagiCube : MonoBehaviour
             BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
             Vector3 rotateDir = getSliderRotateDirection(dir);
             Vector3 centerPoint = squareBlock[centerIndex.x, centerIndex.y, centerIndex.z].block.transform.position;
-            List<int> BIList = new List<int>();
-            //GameObject sliderAnimation = Instantiate();
-            //resetBlockPosition();
-            for (int i = 0; i < 9; i++)
+            //GameObject sliderAnimation = Instantiate(layer, centerPoint, new Quaternion(rotateDir))
+            if (t > noteTime - appTime && t <= noteTime)
             {
-                int beforeIndex = blocksBefore[i];
-                int afterIndex = blocksAfter[i];
-                GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
-                // 总是旋转90度
-                blk.GetComponent<SelectAnime>().playRotate(centerPoint, rotateDir, 90f * animationPercent);
-                BIList.Add(afterIndex);
+
+            }
+            else if (t > noteTime && t < endTime)
+            {
+               
+                List<int> BIList = new List<int>();
+                //GameObject sliderAnimation = Instantiate();
+                //resetBlockPosition();
+                for (int i = 0; i < 9; i++)
+                {
+                    int beforeIndex = blocksBefore[i];
+                    int afterIndex = blocksAfter[i];
+                    GameObject blk = GameObject.Find(blockPath + beforeIndex.ToString());
+                    // 总是旋转90度
+                    blk.GetComponent<SelectAnime>().playRotate(centerPoint, rotateDir, 90f * animationPercent);
+                    BIList.Add(afterIndex);
+                }
             }
         }
     }

@@ -3,43 +3,49 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Leap.Unity{
-  [CustomEditor(typeof(LeapImageRetriever))]
-  public class LeapImageRetrieverEditor : Editor {
+[CustomEditor(typeof(LeapImageRetriever))]
+public class LeapImageRetrieverEditor : Editor {
 
-    private GUIContent _brightTextureGUIContent;
-    private GUIContent _rawTextureGUIContent;
-    private GUIContent _distortionTextureGUIContent;
+  private List<string> BasicModePropertyNames = new List<string>() {
+      "m_Script",
+      "handController",
+    };
 
-    void OnEnable() {
-      _brightTextureGUIContent = new GUIContent("Bright Texture");
-      _rawTextureGUIContent = new GUIContent("Raw Texture");
-      _distortionTextureGUIContent = new GUIContent("Distortion Texture");
-    }
+  private GUIContent _brightTextureGUIContent;
+  private GUIContent _rawTextureGUIContent;
+  private GUIContent _distortionTextureGUIContent;
 
-    public override void OnInspectorGUI() {
-      serializedObject.Update();
-      SerializedProperty properties = serializedObject.GetIterator();
+  void OnEnable() {
+    _brightTextureGUIContent = new GUIContent("Bright Texture");
+    _rawTextureGUIContent = new GUIContent("Raw Texture");
+    _distortionTextureGUIContent = new GUIContent("Distortion Texture");
+  }
 
-      bool useEnterChildren = true;
-      while (properties.NextVisible(useEnterChildren) == true) {
-        useEnterChildren = false;
+  public override void OnInspectorGUI() {
+    serializedObject.Update();
+    SerializedProperty properties = serializedObject.GetIterator();
+
+    bool useEnterChildren = true;
+    while (properties.NextVisible(useEnterChildren) == true) {
+      useEnterChildren = false;
+      if (AdvancedMode._advancedModeEnabled || BasicModePropertyNames.Contains(properties.name)) {
         EditorGUILayout.PropertyField(properties, true);
       }
-
-      if (Application.isPlaying) {
-        LeapImageRetriever retriever = target as LeapImageRetriever;
-        var data = retriever.TextureData;
-        var dataType = typeof(Object);
-
-        EditorGUI.BeginDisabledGroup(true);
-        EditorGUILayout.ObjectField(_brightTextureGUIContent, data.BrightTexture.CombinedTexture, dataType, true);
-        EditorGUILayout.ObjectField(_rawTextureGUIContent, data.RawTexture.CombinedTexture, dataType, true);
-        EditorGUILayout.ObjectField(_distortionTextureGUIContent, data.Distortion.CombinedTexture, dataType, true);
-        EditorGUI.EndDisabledGroup();
-      }
-
-      serializedObject.ApplyModifiedProperties();
     }
+
+    if (Application.isPlaying) {
+      LeapImageRetriever retriever = target as LeapImageRetriever;
+      var data = retriever.TextureData;
+      var dataType = typeof(Object);
+
+      EditorGUI.BeginDisabledGroup(true);
+      EditorGUILayout.ObjectField(_brightTextureGUIContent, data.BrightTexture.CombinedTexture, dataType, true);
+      EditorGUILayout.ObjectField(_rawTextureGUIContent, data.RawTexture.CombinedTexture, dataType, true);
+      EditorGUILayout.ObjectField(_distortionTextureGUIContent, data.Distortion.CombinedTexture, dataType, true);
+      EditorGUI.EndDisabledGroup();
+    }
+
+    serializedObject.ApplyModifiedProperties();
   }
+
 }

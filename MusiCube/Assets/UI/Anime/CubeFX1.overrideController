@@ -6,5 +6,5 @@ AnimatorOverrideController:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: CubeFX1
-  m_Controller: {fileID: 9100000, guid: 60e69978cd7d8f441b32cbb671c4deef, type: 2}
+  m_Controller: {fileID: 9100000, guid: 32fb8062a00f4684b8623fe8055b13df, type: 2}
   m_Clips: []

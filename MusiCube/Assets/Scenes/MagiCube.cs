@@ -114,7 +114,7 @@ public class MagiCube : MonoBehaviour
         www = new WWW(songFullPathAndName);
         yield return www;
 
-        music.clip = AudioLoader.FromMp3Data(www.bytes);
+        music.clip = AudioLoader.FromMp3Data(www.bytes, "music");
         //music.clip= www.GetAudioClip(true, true);
         musicLength = music.clip.length;
         Debug.Log("music: " + songName + "load success\n" + "Length: " + musicLength.ToString());

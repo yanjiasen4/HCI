@@ -28,29 +28,64 @@ namespace ChooseSongUI
         // using for the songs UI
         // the song on the front which is chosen
         private Song now;
-        private int nowi;
+        private int nowi = 0;
         // the difficulty for the current song
         private int nowDiff = 0;
         // song List
         private List<Song> sl;
         // the song and the songimage pair
         private List<KeyValuePair<Song, Button>> songButton;
+        private List<KeyValuePair<Song, AudioClip>> songAudio;
+        private bool isDone = false;
+
+        
 
         // read the background picture of the song
         IEnumerator readSongTexture()
         {
             foreach (KeyValuePair<Song, Button> song in songButton)
             {
-                Debug.Log(song.Key.backgroundFileName);
+                //Debug.Log(song.Key.backgroundFileName);
                 RawImage songri = song.Value.GetComponentInChildren<RawImage>();
                 // the filePath of the background picture
                 string filePath = "file://" + song.Key.songPrefixPath + "/" + song.Key.backgroundFileName;
-                Debug.Log(filePath);
+                //Debug.Log(filePath);
                 //Debug.Log(filePath);
                 WWW www = new WWW(filePath);
                 yield return www;
                 songri.texture = www.texture;
             }
+        }
+
+        IEnumerator readSongAudio()
+        {
+            foreach (KeyValuePair<Song,  Button> song in songButton)
+            {
+                //Debug.Log(song.Key.backgroundFileName);
+                // the filePath of the background picture
+                string filePath = "file://" + song.Key.songPrefixPath + "/" +  song.Key.audioFileName;
+                Debug.Log(filePath);
+                //Debug.Log(filePath);
+                WWW www = new WWW(filePath);
+                yield return www;
+
+                if (www.text != null)
+                {
+                    print("!!!");
+                    AudioClip ac = AudioLoader.FromMp3Data(www.bytes, song.Key.audioFileName);
+                    //music.clip= www.GetAudioClip(true, true);
+                    songAudio.Add(new KeyValuePair<Song, AudioClip>(song.Key, ac));
+                }
+
+                if (camera.GetComponent<AudioSource>().clip == null)
+                {
+                    camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
+                    camera.GetComponent<AudioSource>().Play();
+                }
+
+            }
+            isDone = true;
+
         }
 
         // creat the button for each song
@@ -89,6 +124,7 @@ namespace ChooseSongUI
             sl = SongList.instance.songList;
             //Debug.Log(sl.Count);
             songButton = new List<KeyValuePair<Song, Button>>();
+            songAudio = new List<KeyValuePair<Song, AudioClip>>();
             content.sizeDelta = new Vector2(20 * sl.Count, 0);
             content.position = new Vector2(0,0);
             b.GetComponent<RectTransform>().position = new Vector2(0, 0);
@@ -96,8 +132,9 @@ namespace ChooseSongUI
             addSongButton();
 
             StartCoroutine(readSongTexture());
+            StartCoroutine(readSongAudio());
 
-            Debug.Log(scroll.position);
+            // Debug.Log(scroll.position);
         }
 
         // Update is called once per frame
@@ -109,6 +146,8 @@ namespace ChooseSongUI
             DisplayChange();
             DisplaySongName();
             DisplayDifficulty();
+
+            //camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
         }
 
         void DisplayDifficulty()
@@ -167,7 +206,10 @@ namespace ChooseSongUI
             if (last != now)
             {
                 nowDiff = 0;
+                Debug.Log("nowi" + nowi);
                 PlayerPrefs.SetInt("nowDiff", nowDiff);
+                camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
+                camera.GetComponent<AudioSource>().Play();
             }
             else
             {

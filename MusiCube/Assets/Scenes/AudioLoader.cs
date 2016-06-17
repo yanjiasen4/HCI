@@ -5,7 +5,7 @@ using NAudio;
 using NAudio.Wave;
 
 public static class AudioLoader {
-    public static AudioClip FromMp3Data(byte[] data)
+    public static AudioClip FromMp3Data(byte[] data, string name)
     {
         // Load the data into a stream
         MemoryStream mp3stream = new MemoryStream(data);
@@ -15,7 +15,7 @@ public static class AudioLoader {
         // Convert to WAV data
         WAV wav = new WAV(AudioMemStream(waveStream).ToArray());
         Debug.Log(wav);
-        AudioClip audioClip = AudioClip.Create("AudioLoaded", wav.SampleCount, 1, wav.Frequency, false);
+        AudioClip audioClip = AudioClip.Create(name, wav.SampleCount, 1, wav.Frequency, false);
         audioClip.SetData(wav.LeftChannel, 0);
         // Return the clip
         return audioClip;

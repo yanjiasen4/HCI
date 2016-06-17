@@ -3,6 +3,7 @@
 ################
 Library/
 Temp/
+test_Data/
 *.psd
 *.fbx
 *.blend

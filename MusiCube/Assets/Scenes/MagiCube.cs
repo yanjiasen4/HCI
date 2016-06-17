@@ -145,6 +145,7 @@ public class MagiCube : MonoBehaviour
             // 游戏模式
             case GameState.Play:
                 {
+
                     // update time
                     clearBlockAnimation();
                     resetBlockPosition();
@@ -162,7 +163,7 @@ public class MagiCube : MonoBehaviour
                             nextNotes = notes[timeStamp[noteCount]];
                         }
                     }
-                    List<int> notesIndex = getTimeRangeNoteIndex(timeMs, (int)appTime);
+                    List<int> notesIndex = getTimeRangeNoteIndexDelay(timeMs, (int)appTime, 4*(int)judgeRange);
                     List<Slider> slidersRender = getTimeRangeSlider(timeMs, (int)appTime);
                     foreach (int i in notesIndex)
                     {
@@ -631,6 +632,25 @@ public class MagiCube : MonoBehaviour
     public void PlayBlockIdleAnimation(int id)
     {
         squareBlock[id / 9, (id % 9) / 3, id % 3].block.GetComponent<SelectAnime>().autoPlay(CubeState.unSelect);
+    }
+
+    private List<int> getTimeRangeNoteIndexDelay (int t, int range, int delay)
+    {
+        List<int> ret = new List<int>();
+        int lt = t - delay;
+        int rt = t + range;
+        if (timeStamp[0] > rt)
+            return ret;
+        int lowPoint = BinarySearch(timeStamp, lt);
+        int highPoint = BinarySearch(timeStamp, rt);
+        lowPoint += timeStamp[lowPoint] < lt ? 1 : 0;
+        highPoint -= timeStamp[highPoint] > rt ? 1 : 0;
+        if (lowPoint < 0)
+            lowPoint = 0;
+        for (int i = lowPoint; i <= highPoint; i++)
+            ret.Add(i);
+
+        return ret;
     }
 
     // 编辑函数

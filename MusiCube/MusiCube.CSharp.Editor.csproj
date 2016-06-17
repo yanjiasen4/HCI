@@ -94,6 +94,9 @@
     <Reference Include="NAudio">
       <HintPath>Assets\Plugins\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="MusiCube.CSharp.csproj">

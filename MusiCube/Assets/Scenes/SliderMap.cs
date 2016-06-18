@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using LMWidgets;
+using UnityEngine.UI;
 
-public class SliderDemo : SliderBase 
+public class SliderMap : SliderBase 
 {
   // ASSUME: Active Bar is a transform-sibling of SliderDemo
   public GameObject activeBar = null;
@@ -22,24 +23,26 @@ public class SliderDemo : SliderBase
   private List<GameObject> dots = new List<GameObject>();
 
     public Transform t;
+    public Slider s;
 
   
   protected override void sliderPressed()
   {
     base.sliderPressed();
     PressedGraphics();
-        GameObject tmp = GameObject.Find("Canvas/Content");
-        if(tmp!=null)
-            tmp.GetComponent<ChooseSongUI.scrolltest>().SliderPressedTrigger();
+        //GameObject tmp = GameObject.Find("Canvas/Content");
+        // if(tmp!=null)
+        //    tmp.GetComponent<ChooseSongUI.scrolltest>().SliderPressedTrigger();
+        
     }
 
   protected override void sliderReleased()
   {
     base.sliderReleased();
     ReleasedGraphics();
-        GameObject tmp = GameObject.Find("Canvas/Content");
-        if (tmp != null)
-            tmp.GetComponent<ChooseSongUI.scrolltest>().SliderRelasedTrigger();
+       // GameObject tmp = GameObject.Find("Canvas/Content");
+      //  if (tmp != null)
+       //     tmp.GetComponent<ChooseSongUI.scrolltest>().SliderRelasedTrigger();
     }
 
     
@@ -213,5 +216,14 @@ public class SliderDemo : SliderBase
   {
     base.FixedUpdate();
     UpdateGraphics();
-  }
+        // s.value = (transform.position.x - lowerLimit.GetComponent<Transform>().position.x) / (upperLimit.GetComponent<Transform>().position.x - lowerLimit.GetComponent<Transform>().position.x) * s.maxValue;
+
+        if (State == LeapPhysicsState.Interacting)
+        {
+            Debug.Log("pressed");
+            s.value = (transform.position.x - lowerLimit.GetComponent<Transform>().position.x) / (upperLimit.GetComponent<Transform>().position.x - lowerLimit.GetComponent<Transform>().position.x) * s.maxValue;
+        }
+            transform.position = lowerLimit.GetComponent<Transform>().position + (upperLimit.GetComponent<Transform>().position - lowerLimit.GetComponent<Transform>().position) * (s.value / s.maxValue);
+
+    }
 }

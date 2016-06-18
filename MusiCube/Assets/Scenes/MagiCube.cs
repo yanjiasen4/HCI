@@ -60,6 +60,7 @@ public class MagiCube : MonoBehaviour
     // 音乐控件
     public AudioSource music;
     float musicLength; // ms
+    public int beatMapLength; // 最后一个note所在时间
 
     public Quaternion blockRotate;
     // 帮助加载音乐
@@ -100,6 +101,7 @@ public class MagiCube : MonoBehaviour
         judgeRange = getJudgeRange(bm.od);
         recordBlockPosition();
         setDropTime(appTime/1000);
+
     }
 
     // Use WWW to asynchronously load a music resource
@@ -154,15 +156,7 @@ public class MagiCube : MonoBehaviour
                     int timeMs = (int)(timeCount * 1000);
                    // if (timeMs > timeStamp[timeStamp.Count - 1] + 10000f)
                    //     break;
-                    if(timeMs - judgeRange > timeStamp[noteCount])
-                    {
-                        if (noteCount < timeStamp.Count - 1)
-                        {
-                            noteCount++;
-                            currentNotes = nextNotes;
-                            nextNotes = notes[timeStamp[noteCount]];
-                        }
-                    }
+
                     List<int> notesIndex = getTimeRangeNoteIndexDelay(timeMs, (int)appTime, 4*(int)judgeRange);
                     List<Slider> slidersRender = getTimeRangeSlider(timeMs, (int)appTime);
                     foreach (int i in notesIndex)
@@ -176,6 +170,16 @@ public class MagiCube : MonoBehaviour
                     foreach (Slider sld in slidersRender)
                     {
                         renderSingleSliderStaticly(sld.nt, sld.start, sld.end, timeMs);
+                    }
+
+                    if (timeMs - judgeRange > timeStamp[noteCount])
+                    {
+                        if (noteCount < timeStamp.Count - 1)
+                        {
+                            noteCount++;
+                            currentNotes = nextNotes;
+                            nextNotes = notes[timeStamp[noteCount]];
+                        }
                     }
 
                     timeCount += Time.deltaTime > 0.1f ? 0 : Time.deltaTime;
@@ -282,6 +286,7 @@ public class MagiCube : MonoBehaviour
         {
             timeStamp.Add(key);
         }
+        beatMapLength = timeStamp[timeStamp.Count - 1];
         if (notes.Count == 0) // 没有notes
             isOver = true;
         else if(notes.Count == 1)
@@ -308,19 +313,6 @@ public class MagiCube : MonoBehaviour
                 }
             }
         }
-    }
-
-    public void ClickSquare(int x, int y, int z)
-    {
-       // PlayerPrefs.SetInt("index", 1);
-        /*
-        BlockStatus blockSt = squareBlock[y, z, x];
-        if (blockSt.status == BlockStatus.state.active)
-        {
-            blockSt.status = BlockStatus.state.movingDown;
-            StartCoroutine(blockSt.moveBack());
-        }
-        */
     }
 
     private void recordBlockPosition()
@@ -789,7 +781,10 @@ public class MagiCube : MonoBehaviour
         if (songFullPathAndName != null)
             bm.writeToFile(beatmapFullPathAndName);
     }
-
+    public float getProgress()
+    {
+        return timeCount * 1000 / (float)beatMapLength;
+    }
     public GameObject getBlockById(int id)
     {
         GameObject blk = GameObject.Find(blockPath + id.ToString()) as GameObject;

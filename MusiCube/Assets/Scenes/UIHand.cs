@@ -1,22 +1,42 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UIHand : MonoBehaviour {
 
+    private List<GameObject> handHiden = new List<GameObject>();
+
 	// Use this for initialization
 	void Start () {
-	
-	}
+        handHiden.Add(GameObject.Find("MinimalHand(Clone)"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/middle"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/pinky"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/ring"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/palm"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/forearm"));
+    }
 	
 	// Update is called once per frame
 	void Update () {
+        GetHandHiden();
         // 在UI时，Hand只剩下index（食指）
-        GameObject.Find("MinimalHand(Clone)").SetActive(false);
-        //GameObject.Find("RigidRoundHand(Clone)/thumb").SetActive(false);
-        GameObject.Find("RigidRoundHand(Clone)/middle").SetActive(false);
-        GameObject.Find("RigidRoundHand(Clone)/pinky").SetActive(false);
-        GameObject.Find("RigidRoundHand(Clone)/ring").SetActive(false);
-        GameObject.Find("RigidRoundHand(Clone)/palm").SetActive(false);
-        GameObject.Find("RigidRoundHand(Clone)/forearm").SetActive(false);
+        foreach (GameObject obj in handHiden)
+            SetActiveFalse(obj);
+    }
+
+    void GetHandHiden()
+    {
+        handHiden.Add(GameObject.Find("MinimalHand(Clone)"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/middle"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/pinky"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/ring"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/palm"));
+        handHiden.Add(GameObject.Find("RigidRoundHand(Clone)/forearm"));
+    }
+
+    void SetActiveFalse(GameObject obj)
+    {
+        if (obj != null)
+            obj.SetActive(false);
     }
 }

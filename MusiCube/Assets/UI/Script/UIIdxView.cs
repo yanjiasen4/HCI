@@ -25,6 +25,8 @@ namespace MusiCube
         public float centerHeight = 70;
         public float centerWidth = 4;
 
+        public float blockWidth = 10;
+
         public Color bigLineColor = new Color(1, 1, 1, 1);
         public Color smallLineColor = new Color(1, 0, 1, 1);
         public Color curLineColor = new Color(1, 0, 0, 1);
@@ -94,11 +96,14 @@ namespace MusiCube
                     if (subNotes != null)
                     {
                         int beatTime = time - offSet;
-                     
-                        int subIdx = (int)Mathf.Round(beatTime / timeGap * divide);
-                        int subSubIdx = subIdx % divide;
-                        subIdx = subIdx / 4;
-                        float posX = width / 2 - offsetW - (idx - subIdx) * beatWidth + (subSubIdx) * beatWidth / divide;
+
+                        //int subIdx = (int)Mathf.Round(beatTime / timeGap * divide);
+                        //int subSubIdx = subIdx % divide;
+                        //subIdx = subIdx / divide;
+                        //float posX = width / 2 - offsetW - (idx - subIdx) * beatWidth + (subSubIdx) * beatWidth / divide;
+                        int subIdx = (int)Mathf.Round(beatTime / timeGap);
+                        //Debug.Log((time - timeGap * subIdx) / timeGap * beatWidth);
+                        float posX = width / 2 - offsetW - (idx - subIdx) * beatWidth + (time - offSet - timeGap*subIdx) / timeGap * beatWidth;
                         DrawBlocks(posX, subNotes.Count, vh);
                     }
                 }
@@ -225,32 +230,33 @@ namespace MusiCube
             float width = rectTransform.rect.width;
             float height = rectTransform.rect.height;
             float sWidth = beatWidth / divide;
+            sWidth = sWidth > blockWidth ? blockWidth : sWidth;
             UIVertex vert = UIVertex.simpleVert;
             Color curColor;
             for (int i = 0; i < blockNum; i++)
             {
                 UIVertex[] quad = new UIVertex[4];
-                vert.position = new Vector3(smallLinePos + lineWidth + blockPadding - beatWidth/(divide * 2), -(height - (i + 1) * blockHeight + blockPadding));
+                vert.position = new Vector3(smallLinePos + lineWidth + blockPadding - sWidth/2, -(height - (i + 1) * blockHeight + blockPadding));
                 curColor = noteColor;
-                curColor.a *= alphaCurve.Evaluate((smallLinePos + lineWidth + blockPadding - beatWidth / (divide * 2)) / width);
+                curColor.a *= alphaCurve.Evaluate((smallLinePos + lineWidth + blockPadding - sWidth / 2) / width);
                 vert.color = curColor;
                 quad[0] = vert;
 
-                vert.position = new Vector3(smallLinePos + lineWidth + blockPadding - beatWidth / (divide * 2), -(height - i * blockHeight));
+                vert.position = new Vector3(smallLinePos + lineWidth + blockPadding - sWidth / 2, -(height - i * blockHeight));
                 curColor = noteColor;
-                curColor.a *= alphaCurve.Evaluate((smallLinePos + lineWidth + blockPadding - beatWidth / (divide * 2)) / width);
+                curColor.a *= alphaCurve.Evaluate((smallLinePos + lineWidth + blockPadding - sWidth / 2) / width);
                 vert.color = curColor;
                 quad[1] = vert;
 
-                vert.position = new Vector3(smallLinePos + sWidth - lineWidth - blockPadding - beatWidth / (divide * 2), -(height - i * blockHeight));
+                vert.position = new Vector3(smallLinePos + sWidth - lineWidth - blockPadding - sWidth / 2, -(height - i * blockHeight));
                 curColor = noteColor;
-                curColor.a *= alphaCurve.Evaluate((smallLinePos + sWidth - lineWidth - blockPadding - beatWidth / (divide * 2)) / width);
+                curColor.a *= alphaCurve.Evaluate((smallLinePos + sWidth - lineWidth - blockPadding - sWidth / 2) / width);
                 vert.color = curColor;
                 quad[2] = vert;
 
-                vert.position = new Vector3(smallLinePos + sWidth - lineWidth - blockPadding - beatWidth / (divide * 2), -(height - (i + 1) * blockHeight + blockPadding));
+                vert.position = new Vector3(smallLinePos + sWidth - lineWidth - blockPadding - sWidth / 2, -(height - (i + 1) * blockHeight + blockPadding));
                 curColor = noteColor;
-                curColor.a *= alphaCurve.Evaluate((smallLinePos + sWidth - lineWidth - blockPadding - beatWidth / (divide * 2)) / width);
+                curColor.a *= alphaCurve.Evaluate((smallLinePos + sWidth - lineWidth - blockPadding - sWidth / 2) / width);
                 vert.color = curColor;
                 quad[3] = vert;
 

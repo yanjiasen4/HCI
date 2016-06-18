@@ -28,16 +28,20 @@ public class MapMaker : MonoBehaviour {
 
     // 节拍
     int beatSnapDivisor = 3;
-    int[] divisorArray =
+    static int[] divisorArray =
     {
         1,2,3,4,6,8,12
     };
+    int currDivide;
 
     float timeSlice = 150f; // default time slice
     float startTime = 0;
     float currTime = 0;
     int sliceCount = 0;
     int maxSlice;
+
+    float beatWidth = 100f;
+    float beatWidthScaleStep = 3f;
 
     bool isSelected = false;
     int selectedBlockID = -1;
@@ -58,6 +62,7 @@ public class MapMaker : MonoBehaviour {
 
         seekContinuousTrigleTime = 0.2f;
         seekMinTime = 40f;
+        currDivide = divisorArray[beatSnapDivisor];
         timeSlice = CalculateTimeSlice();
         startTime = CalculateStartTime();
         initNotesBar();
@@ -82,7 +87,8 @@ public class MapMaker : MonoBehaviour {
             realTime -= 1;
         notesBar.GetComponent<UIIdxView>().curTime = realTime;
 
-
+        ud.divide = currDivide;
+        ud.beatWidth = beatWidth;
         //UpdateSliceCount();
         // Music play or pause
         if (Input.GetKeyDown(KeyCode.Space))
@@ -99,6 +105,15 @@ public class MapMaker : MonoBehaviour {
                 mc.isPaused = true;
                 mc.music.Pause();
             }
+        }
+
+        if(Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            beatWidth += beatWidthScaleStep;
+        }
+        if(Input.GetAxis("Mouse ScrollWheel") > 0)
+        {
+            beatWidth -= beatWidthScaleStep;
         }
 
         // play finished
@@ -245,7 +260,7 @@ public class MapMaker : MonoBehaviour {
         ud.curTime = 0;
         ud.bpm = mc.bm.GetBpm();
         ud.offSet = mc.bm.GetOffset();
-        ud.divide = divisorArray[beatSnapDivisor];
+        ud.divide = currDivide;
         ud.notes = mc.notes;
         ud.timestamps = mc.timeStamp;
     }
@@ -272,7 +287,7 @@ public class MapMaker : MonoBehaviour {
         timeText.text = minute.ToString() + ":" + second.ToString() + ":" + millis.ToString();
 
         // set divisor
-        divisorText.text = ("BeatSnapDivisor: 1/" + divisorArray[beatSnapDivisor].ToString()); 
+        divisorText.text = ("BeatSnapDivisor: 1/" + currDivide.ToString()); 
     }
 
     public void SetTimeSlice(float t)
@@ -291,6 +306,11 @@ public class MapMaker : MonoBehaviour {
     {
         int currDivisor = (int)divisor;
         beatSnapDivisor = currDivisor;
+        int lastDivide = currDivide;
+        currDivide = divisorArray[beatSnapDivisor];
+        timeSlice = ((60 / mc.bm.GetBpm() / currDivide));
+        startTime = CalculateStartTime();
+        sliceCount = sliceCount * currDivide / lastDivide;
     }
     public void UserSaveBeatMap()
     {
@@ -304,7 +324,7 @@ public class MapMaker : MonoBehaviour {
     }
     float CalculateTimeSlice()
     {
-        return ((60 / mc.bm.GetBpm() / divisorArray[beatSnapDivisor]));
+        return ((60 / mc.bm.GetBpm() / currDivide));
     }
     float CalculateStartTime()
     {
@@ -343,7 +363,7 @@ public class MapMaker : MonoBehaviour {
     {
         return (int)(currTime * 1000);
     }
-    void beatForward()
+    public void beatForward()
     {
         float t = currTime;
         if(t == 0)
@@ -354,13 +374,14 @@ public class MapMaker : MonoBehaviour {
         {
             sliceCount++;
             t = timeSlice * sliceCount + startTime;
+            //print(startTime);
         }
         currTime = t;
         mc.SetTime(t);
         mc.music.time = t;
         tl.value = t;
     }
-    void beatBack()
+    public void beatBack()
     {
         float t = currTime;
         float currTimePoint = timeSlice * sliceCount + startTime;

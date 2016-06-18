@@ -61,14 +61,14 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="LeapCSharp.NET3.5">
+      <HintPath>Assets\Plugins\LeapCSharp.NET3.5.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio">
       <HintPath>Assets\Plugins\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms">
       <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="LeapCSharp.NET3.5">
-      <HintPath>Assets\Plugins\LeapCSharp.NET3.5.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -186,8 +186,11 @@
     <Compile Include="Assets\Scenes\GameManager.cs" />
     <Compile Include="Assets\Scenes\HandToScreen.cs" />
     <Compile Include="Assets\Scenes\MagiCube.cs" />
+    <Compile Include="Assets\Scenes\MapLeftToggle.cs" />
     <Compile Include="Assets\Scenes\MapMaker.cs" />
+    <Compile Include="Assets\Scenes\MapRightToggle.cs" />
     <Compile Include="Assets\Scenes\SliderDiff.cs" />
+    <Compile Include="Assets\Scenes\SliderMap.cs" />
     <Compile Include="Assets\Scenes\SliderSong.cs" />
     <Compile Include="Assets\Scenes\UIClick.cs" />
     <Compile Include="Assets\Scenes\UIHand.cs" />
@@ -196,6 +199,9 @@
     <Compile Include="Assets\Test.cs" />
     <Compile Include="Assets\UI\Anime\CameraAnime.cs" />
     <Compile Include="Assets\UI\Anime\CubeAnime.cs" />
+    <Compile Include="Assets\UI\ProgressBar\Script\ProgressBarBehaviour.cs" />
+    <Compile Include="Assets\UI\ProgressBar\Script\ProgressRadialBehaviour.cs" />
+    <Compile Include="Assets\UI\ProgressBar\Script\Utils.cs" />
     <Compile Include="Assets\UI\Script\CircleAnime.cs" />
     <Compile Include="Assets\UI\Script\Test\UIIdxViewTest.cs" />
     <Compile Include="Assets\UI\Script\UIIdxView.cs" />

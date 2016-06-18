@@ -69,20 +69,22 @@ namespace ChooseSongUI
                 WWW www = new WWW(filePath);
                 yield return www;
 
-                if (www.text != null)
+                if(www.error != null)
                 {
-                    print("!!!");
+                    print(www.error);
+                }
+                else
+                {
                     AudioClip ac = AudioLoader.FromMp3Data(www.bytes, song.Key.audioFileName);
                     //music.clip= www.GetAudioClip(true, true);
                     songAudio.Add(new KeyValuePair<Song, AudioClip>(song.Key, ac));
                 }
-
-                if (camera.GetComponent<AudioSource>().clip == null)
-                {
-                    camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
-                    camera.GetComponent<AudioSource>().Play();
-                }
-
+                
+            }
+            if (camera.GetComponent<AudioSource>().clip == null)
+            {
+                camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
+                camera.GetComponent<AudioSource>().Play();
             }
             isDone = true;
 

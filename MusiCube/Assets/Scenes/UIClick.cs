@@ -16,8 +16,10 @@ public class UIClick : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Vector3 posThumb = GameObject.Find("thumb/bone3").GetComponent<Transform>().position;
-        Vector3 posIndex = GameObject.Find("index/bone3").GetComponent<Transform>().position;
+
+        Vector3  posThumb = GameObject.Find("thumb/bone3").GetComponent<Transform>().position;
+
+        Vector3  posIndex = GameObject.Find("index/bone3").GetComponent<Transform>().position;
 
         double distance = System.Math.Pow(
                 System.Math.Pow((posIndex.x - posThumb.x),2)+

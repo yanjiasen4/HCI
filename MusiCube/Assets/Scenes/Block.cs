@@ -3,24 +3,25 @@ using System.Collections;
 
 public class Block : MonoBehaviour
 {
-    MagiCube parentSquare;
-    int xIdx;
-    int yIdx;
-    int zIdx;
+    GameManager gameManager;
+    public int xIdx;
+    public int yIdx;
+    public int zIdx;
 
     public void BindParent(int x, int y, int z)
     {
-        parentSquare = transform.parent.GetComponent<MagiCube>();
+        gameManager = transform.parent.parent.GetComponent<GameManager>();
         xIdx = x;
         yIdx = y;
-        zIdx = z;
+        zIdx = z; 
     }
 
     void OnTriggerEnter(Collider c)
     {
-        if (parentSquare != null)
+        if (gameManager != null)
         {
-            parentSquare.ClickSquare(xIdx, yIdx, zIdx);
+            print(xIdx + " " + yIdx + " " + zIdx);
+            gameManager.ClickSquare(xIdx, yIdx, zIdx);
         }
     }
 }

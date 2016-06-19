@@ -172,6 +172,7 @@
     <Compile Include="Assets\LeapMotionVR\Widgets\Scripts\DataBinderExamples\SliderToTextDataBinder.cs" />
     <Compile Include="Assets\LeapMotionVR\Widgets\Scripts\DataBinderExamples\ToggleToTextDataBinder.cs" />
     <Compile Include="Assets\LeapMotionVR\Widgets\Scripts\WidgetsEnabler.cs" />
+    <Compile Include="Assets\MainManager.cs" />
     <Compile Include="Assets\MusiCube\AnimeScript\AnimeResource.cs" />
     <Compile Include="Assets\MusiCube\AnimeScript\PlaneAnime.cs" />
     <Compile Include="Assets\MusiCube\AnimeScript\RowAnime.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Assets\Scenes\MagiCube\MagiCube.cs" />
     <Compile Include="Assets\Scenes\MagiCube\SliderRotate.cs" />
     <Compile Include="Assets\Scenes\Main\MainManager.cs" />
+    <Compile Include="Assets\Scenes\Score\ScoreManager.cs" />
     <Compile Include="Assets\Test.cs" />
     <Compile Include="Assets\UI\Anime\CameraAnime.cs" />
     <Compile Include="Assets\UI\Anime\CubeAnime.cs" />

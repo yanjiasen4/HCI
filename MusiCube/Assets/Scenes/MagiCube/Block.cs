@@ -20,7 +20,6 @@ public class Block : MonoBehaviour
     {
         if (gameManager != null)
         {
-            print(xIdx + " " + yIdx + " " + zIdx);
             gameManager.ClickSquare(xIdx, yIdx, zIdx);
         }
     }

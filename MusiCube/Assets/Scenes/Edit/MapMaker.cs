@@ -221,12 +221,12 @@ public class MapMaker : MonoBehaviour {
             else if(Input.GetKeyUp(KeyCode.Alpha1))
             {
                 print(selectedBlockID / 9 + "xplus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.xplus, defaultSliderDuration);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.xminus, defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha2))
             {
                 print(selectedBlockID / 9 + "xminus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.xminus, defaultSliderDuration);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.xplus, defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha3))
             {
@@ -241,12 +241,12 @@ public class MapMaker : MonoBehaviour {
             else if (Input.GetKeyUp(KeyCode.Alpha5))
             {
                 print(selectedBlockID / 9 + "zplus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.zplus,  defaultSliderDuration);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.zminus,  defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha6))
             {
                 print(selectedBlockID / 9 + "zminus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.zminus, defaultSliderDuration);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.zplus, defaultSliderDuration);
             }
 
             if(Input.GetKeyUp(KeyCode.Delete) || Input.GetKeyUp(KeyCode.Backspace))

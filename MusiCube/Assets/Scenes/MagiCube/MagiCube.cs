@@ -54,6 +54,7 @@ public class MagiCube : MonoBehaviour
     public List<int> timeStamp = new List<int>();
     public List<Note> currentNotes = new List<Note>();
     public List<Note> nextNotes = new List<Note>();
+    private GameObject sliderAnimation;
     bool isOver = false;
     public GameState state;
     public bool isPaused = false;
@@ -101,8 +102,9 @@ public class MagiCube : MonoBehaviour
         judgeRange = getJudgeRange(bm.od);
         recordBlockPosition();
         setDropTime(appTime/1000);
-        layer.GetComponentInChildren<RowAnime>().Initiate();
-        layer.SetActive(false);
+        sliderAnimation = Instantiate(layer, Vector3.zero, Quaternion.identity) as GameObject;
+        sliderAnimation.GetComponentInChildren<RowAnime>().Initiate();
+        sliderAnimation.SetActive(false);
     }
 
     // Use WWW to asynchronously load a music resource
@@ -477,7 +479,7 @@ public class MagiCube : MonoBehaviour
         Vector3 rotateDir = getSliderRotateDirection(dir);
         Vector3 centerPoint = squareBlock[centerIndex.x,centerIndex.y,centerIndex.z].block.transform.position;
 
-        GameObject sliderAnimation = Instantiate(layer, centerPoint, Quaternion.identity) as GameObject;
+        //GameObject sliderAnimation = Instantiate(layer, centerPoint, Quaternion.identity) as GameObject;
         sliderAnimation.GetComponent<RowAnime>().Initiate();
         sliderAnimation.GetComponent<RowAnime>().raiseTime = appTime / 1000;
         sliderAnimation.GetComponent<RowAnime>().autoPlay(RowState.raise);
@@ -587,21 +589,22 @@ public class MagiCube : MonoBehaviour
             BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
             Vector3 rotateDir = getSliderRotateDirection(dir);
             Vector3 centerPoint = squareBlock[centerIndex.x, centerIndex.y, centerIndex.z].block.transform.position;
-            layer.SetActive(true);
-            layer.transform.position = centerPoint;
-            layer.GetComponent<SliderRotate>().Rotate(dir);
+            sliderAnimation.SetActive(true);
+            sliderAnimation.transform.position = centerPoint;
+            //sliderAnimation.GetComponent<SliderRotate>().Rotate(dir);
             int startTime = (int)(noteTime - appTime);
             //GameObject sliderAnimation = Instantiate(layer, centerPoint, new Quaternion(rotateDir))
             if (t > noteTime - appTime && t <= noteTime)
             {
-                layer.GetComponentInChildren<RowAnime>().playRaise((float)(t - startTime) / appTime);
+                sliderAnimation.GetComponentInChildren<RowAnime>().playRaise((float)(t - startTime) / appTime);
             }
             else if (t > noteTime && t < endTime)
             {
                 float pullingPercent = (t - (float)noteTime) / ((float)endTime - noteTime);
-                layer.GetComponentInChildren<RowAnime>().playPulling(pullingPercent, pullingPercent, pullingPercent);
-                layer.transform.rotation = Quaternion.identity;
-                layer.transform.rotation = Quaternion.Euler(pullingPercent * rotateDir * 90f);
+                print(pullingPercent);
+                sliderAnimation.GetComponentInChildren<RowAnime>().playPulling(pullingPercent, pullingPercent, pullingPercent);
+                sliderAnimation.transform.rotation = Quaternion.identity;
+                sliderAnimation.transform.rotation = Quaternion.Euler(pullingPercent * rotateDir * 90f);
                 List<int> BIList = new List<int>();
                 //GameObject sliderAnimation = Instantiate();
                 //resetBlockPosition();
@@ -821,6 +824,7 @@ public class MagiCube : MonoBehaviour
                 }
             }
             sliders.Remove(deleteSlider);
+            sliderAnimation.SetActive(false);
         }
         notes[t].Remove(deleteNote);
         if (notes[t].Count == 0)

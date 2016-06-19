@@ -23,27 +23,27 @@ public class SliderRotate : MonoBehaviour {
         switch(dir)
         {
             case Direction.xplus:
-                r = Quaternion.Euler(0, 90, 0);
-                t.localRotation = r;
-                break;
-            case Direction.xminus:
-                r = Quaternion.Euler(0, 270, 0);
-                t.localRotation = r;
-                break;
-            case Direction.yplus:
                 r = Quaternion.Euler(0, 0, 90);
                 t.localRotation = r;
                 break;
-            case Direction.yminus:
+            case Direction.xminus:
                 r = Quaternion.Euler(0, 0, 270);
                 t.localRotation = r;
                 break;
-            case Direction.zplus:
+            case Direction.yplus:
                 r = Quaternion.Euler(90, 0, 0);
                 t.localRotation = r;
                 break;
-            case Direction.zminus:
+            case Direction.yminus:
                 r = Quaternion.Euler(270, 0, 0);
+                t.localRotation = r;
+                break;
+            case Direction.zplus:
+                r = Quaternion.Euler(0, 90, 0);
+                t.localRotation = r;
+                break;
+            case Direction.zminus:
+                r = Quaternion.Euler(0, 270, 0);
                 t.localRotation = r;
                 break;
             default:

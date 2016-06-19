@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using MusiCube;
 using UnityEngine.UI;
 using ProgressBar;
@@ -54,6 +55,7 @@ public class GameManager : MonoBehaviour {
     private float score = 0f;    // 得分数
     private int combo = 0;       // 连击数
     private int maxCombo = 0;    // 最大连击数
+    private float acc = 0f;      // 准确度
     private float progress = 0f; // 游玩的进度
     #endregion
 
@@ -279,9 +281,9 @@ public class GameManager : MonoBehaviour {
                         hg = hitGrade.miss;
                         missCount++;
                         combo = 0;
-                        maxCombo = combo > maxCombo ? combo : maxCombo; // 更新最大连击数
                     }
-
+                    acc = (3 * perfectCount + 2 * goodCount + normalCount) / (3 * (perfectCount + goodCount + normalCount + missCount));
+                    maxCombo = combo > maxCombo ? combo : maxCombo; // 更新最大连击数
                     ht.status = hitStatus.hited;
                     ht.hitTime = currTime;
                     ht.grade = hg;
@@ -306,5 +308,17 @@ public class GameManager : MonoBehaviour {
     void setProgress()
     {
         progressBar.GetComponent<ProgressBarBehaviour>().Value = 100 * mc.getProgress();
+    }
+
+    void switchToScore()
+    {
+        PlayerPrefs.SetFloat("score", score);
+        PlayerPrefs.SetInt("perfectCount", perfectCount);
+        PlayerPrefs.SetInt("goodCount", goodCount);
+        PlayerPrefs.SetInt("normalCount", normalCount);
+        PlayerPrefs.SetInt("missCount", missCount);
+        PlayerPrefs.SetInt("maxCombo", maxCombo);
+        PlayerPrefs.SetFloat("acc", acc);
+        SceneManager.LoadScene(4);
     }
 }

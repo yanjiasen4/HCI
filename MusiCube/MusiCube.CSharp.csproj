@@ -198,6 +198,7 @@
     <Compile Include="Assets\UI\LeapMotion\UIClick.cs" />
     <Compile Include="Assets\UI\LeapMotion\UICursor.cs" />
     <Compile Include="Assets\UI\LeapMotion\UIHand.cs" />
+    <Compile Include="Assets\UI\LeapMotion\UISave.cs" />
     <Compile Include="Assets\UI\LeapMotion\scrolltest.cs" />
     <Compile Include="Assets\UI\ProgressBar\Script\ProgressBarBehaviour.cs" />
     <Compile Include="Assets\UI\ProgressBar\Script\ProgressRadialBehaviour.cs" />

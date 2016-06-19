@@ -210,8 +210,11 @@ namespace ChooseSongUI
                 nowDiff = 0;
                 Debug.Log("nowi" + nowi);
                 PlayerPrefs.SetInt("nowDiff", nowDiff);
-                camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
-                camera.GetComponent<AudioSource>().Play();
+                if (songAudio.Count > nowi)
+                {
+                    camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
+                    camera.GetComponent<AudioSource>().Play();
+                }
             }
             else
             {

@@ -22,6 +22,7 @@ public class UICursor : MonoBehaviour {
         if(other.gameObject.CompareTag("Button"))
         {
             PlayerPrefs.SetFloat("ClickedTime", 0);
+            PlayerPrefs.SetInt("Buttoned", 1);
             other.GetComponent<Button>().Select();
         }
     }
@@ -52,8 +53,9 @@ public class UICursor : MonoBehaviour {
         if (other.gameObject.CompareTag("Button"))
         {
             PlayerPrefs.SetFloat("ClickedTime", 0);
+            PlayerPrefs.SetInt("Buttoned", 0);
             EventSystem e = GameObject.Find("EventSystem").GetComponent<EventSystem>();
-            e.StopAllCoroutines();
+            e.SetSelectedGameObject(null);
         }
     }
 }

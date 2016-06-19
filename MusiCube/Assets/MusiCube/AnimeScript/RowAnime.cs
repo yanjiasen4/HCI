@@ -403,13 +403,20 @@ namespace MusiCube
             //y轴朝上，因此pos要反一下
             hintPlanes[1].transform.localPosition = new Vector3(heightOffset + raiseHeight + hintHeight, -pos);
             hintPlanes[3].transform.localPosition = new Vector3(-(heightOffset + raiseHeight + hintHeight), pos);
+
             for (int i = 0; i < 3; i++)
             {
                 float fill = Mathf.Lerp(0, 0.5f, extent * (3 + 2 * gap) - i * (1 + gap));
                 subPlanes[i].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
                 subPlanes[i + 3].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
-                subPlanes[i + 6].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
-                subPlanes[i + 9].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
+                //subPlanes[i + 6].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
+                //subPlanes[i + 9].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
+            }
+            for(int i = 0; i < 3; i++)
+            {
+                float fill = Mathf.Lerp(0, 0.5f, extent * (3 + 2 * gap) - i * (1 + gap));
+                subPlanes[8-i].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
+                subPlanes[11-i].GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(fill, 0));
             }
         }
 

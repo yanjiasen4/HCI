@@ -101,7 +101,8 @@ public class MagiCube : MonoBehaviour
         judgeRange = getJudgeRange(bm.od);
         recordBlockPosition();
         setDropTime(appTime/1000);
-
+        layer.GetComponentInChildren<RowAnime>().Initiate();
+        layer.SetActive(false);
     }
 
     // Use WWW to asynchronously load a music resource
@@ -586,14 +587,21 @@ public class MagiCube : MonoBehaviour
             BlockIndex centerIndex = getBlockIndex(blocksBefore[4]);
             Vector3 rotateDir = getSliderRotateDirection(dir);
             Vector3 centerPoint = squareBlock[centerIndex.x, centerIndex.y, centerIndex.z].block.transform.position;
+            layer.SetActive(true);
+            layer.transform.position = centerPoint;
+            layer.GetComponent<SliderRotate>().Rotate(dir);
+            int startTime = (int)(noteTime - appTime);
             //GameObject sliderAnimation = Instantiate(layer, centerPoint, new Quaternion(rotateDir))
             if (t > noteTime - appTime && t <= noteTime)
             {
-
+                layer.GetComponentInChildren<RowAnime>().playRaise((float)(t - startTime) / appTime);
             }
             else if (t > noteTime && t < endTime)
             {
-               
+                float pullingPercent = (t - (float)noteTime) / ((float)endTime - noteTime);
+                layer.GetComponentInChildren<RowAnime>().playPulling(pullingPercent, pullingPercent, pullingPercent);
+                layer.transform.rotation = Quaternion.identity;
+                layer.transform.rotation = Quaternion.Euler(pullingPercent * rotateDir * 90f);
                 List<int> BIList = new List<int>();
                 //GameObject sliderAnimation = Instantiate();
                 //resetBlockPosition();
@@ -688,6 +696,28 @@ public class MagiCube : MonoBehaviour
         }
         return mid;
     }
+    public int getSliderLayer(Direction dir, int blockID)
+    {
+        int layer = 0;
+        switch(dir)
+        {
+            case Direction.xplus:
+            case Direction.xminus:
+                layer = (blockID % 9) / 3;
+                break;
+            case Direction.yplus:
+            case Direction.yminus:
+                layer = blockID /9;
+                break;
+            case Direction.zplus:
+            case Direction.zminus:
+                layer = blockID % 3;
+                break;
+            default:
+                break;
+        }
+        return layer;
+    }
 
     public void addNote(int t,int blockID, Axis a)
     {
@@ -715,11 +745,11 @@ public class MagiCube : MonoBehaviour
         nt.dir = dir;
         add2Notes(t, nt);
     }
-    public void addSlider(int t, int layerID, Direction dir, int duration)
+    public void addSlider(int t, int blockID, Direction dir, int duration)
     {
         Note nt = new Note();
         nt.type = NoteType.Slider;
-        nt.id = layerID;
+        nt.id = getSliderLayer(dir,blockID);
         nt.dir = dir;
         nt.duration = duration;
         add2Notes(t, nt);
@@ -762,6 +792,42 @@ public class MagiCube : MonoBehaviour
             notes.Remove(t);
             timeStamp.Remove(t);
         } 
+    }
+    public void deleteNote(int t, int blockID)
+    {
+        if (!timeStamp.Contains(t))
+            return;
+        Note deleteNote = new Note();
+        bool isNote = false;
+        foreach (Note nt in notes[t])
+        {
+            if (nt.id == blockID && nt.type == NoteType.Note)
+            {
+                deleteNote = nt;
+                isNote = true;
+                break;
+            }
+        }
+        if (isNote != true)
+        {
+            Slider deleteSlider = new Slider();
+            foreach (Slider sld in sliders)
+            {
+                if (getSliderLayer(sld.nt.dir, sld.nt.id) == sld.nt.id)
+                {
+                    deleteNote = sld.nt;
+                    deleteSlider = sld;
+                    break;
+                }
+            }
+            sliders.Remove(deleteSlider);
+        }
+        notes[t].Remove(deleteNote);
+        if (notes[t].Count == 0)
+        {
+            notes.Remove(t);
+            timeStamp.Remove(t);
+        }
     }
     // for debug
     private void printSliders()

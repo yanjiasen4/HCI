@@ -42,6 +42,7 @@ public class MapMaker : MonoBehaviour {
 
     float beatWidth = 100f;
     float beatWidthScaleStep = 3f;
+    int defaultSliderDuration = 0;
 
     bool isSelected = false;
     int selectedBlockID = -1;
@@ -65,6 +66,7 @@ public class MapMaker : MonoBehaviour {
         currDivide = divisorArray[beatSnapDivisor];
         timeSlice = CalculateTimeSlice();
         startTime = CalculateStartTime();
+        defaultSliderDuration = (int)((1000 * timeSlice) * currDivide);
         initNotesBar();
     }
 
@@ -219,32 +221,38 @@ public class MapMaker : MonoBehaviour {
             else if(Input.GetKeyUp(KeyCode.Alpha1))
             {
                 print(selectedBlockID / 9 + "xplus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.xplus, 1000);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.xplus, defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha2))
             {
                 print(selectedBlockID / 9 + "xminus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.xminus, 1000);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.xminus, defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha3))
             {
                 print(selectedBlockID / 9 + "yplus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.yplus, 1000);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.yplus, defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha4))
             {
                 print(selectedBlockID / 9 + "yminus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.yminus, 1000);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.yminus, defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha5))
             {
                 print(selectedBlockID / 9 + "zplus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.zplus, 1000);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.zplus,  defaultSliderDuration);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha6))
             {
                 print(selectedBlockID / 9 + "zminus");
-                mc.addSlider(GetTimeMsInt(), selectedBlockID / 9, Direction.zminus, 1000);
+                mc.addSlider(GetTimeMsInt(), selectedBlockID, Direction.zminus, defaultSliderDuration);
+            }
+
+            if(Input.GetKeyUp(KeyCode.Delete) || Input.GetKeyUp(KeyCode.Backspace))
+            {
+                print("delete note: " + selectedBlockID.ToString());
+                mc.deleteNote(GetTimeMsInt(), selectedBlockID);
             }
         }
     }

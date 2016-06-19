@@ -26,7 +26,7 @@ public class SliderSong : SliderBase
   {
     base.sliderPressed();
     PressedGraphics();
-        GameObject.Find("Canvas/Content").GetComponent<ChooseSongUI.scrolltest>().SliderPressedTrigger();
+        GameObject.Find("SelectMusicManager").GetComponent<ChooseSongUI.scrolltest>().SliderPressedTrigger();
     }
 
   protected override void sliderReleased()
@@ -34,7 +34,7 @@ public class SliderSong : SliderBase
     base.sliderReleased();
     ReleasedGraphics();
         //Constrain();
-        GameObject.Find("Canvas/Content").GetComponent<ChooseSongUI.scrolltest>().SliderRelasedTrigger();
+        GameObject.Find("SelectMusicManager").GetComponent<ChooseSongUI.scrolltest>().SliderRelasedTrigger();
   }
 
     

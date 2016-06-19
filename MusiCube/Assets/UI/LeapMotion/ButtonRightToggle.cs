@@ -33,7 +33,7 @@ public class ButtonRightToggle : ButtonToggleBase
     offGraphics.SetActive(false);
 	midGraphics.SetColor(MidGraphicsOnColor);
 	botGraphics.SetColor(BotGraphicsOnColor);
-        GameObject.Find("Canvas/Content").GetComponent<ChooseSongUI.scrolltest>().RightButtonTrigger();
+        GameObject.Find("SelectMusicManager").GetComponent<ChooseSongUI.scrolltest>().RightButtonTrigger();
     }
 
   private void TurnsOffGraphics()
@@ -42,7 +42,7 @@ public class ButtonRightToggle : ButtonToggleBase
     offGraphics.SetActive(true);
 	midGraphics.SetColor(MidGraphicsOffColor);
 	botGraphics.SetColor(BotGraphicsOffColor);
-        GameObject.Find("Canvas/Content").GetComponent<ChooseSongUI.scrolltest>().RightButtonTrigger();
+        GameObject.Find("SelectMusicManager").GetComponent<ChooseSongUI.scrolltest>().RightButtonTrigger();
     }
 
   private void UpdateGraphics()

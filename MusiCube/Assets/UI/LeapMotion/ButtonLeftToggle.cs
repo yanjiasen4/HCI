@@ -27,7 +27,7 @@ public class ButtonLeftToggle : ButtonToggleBase
 
   private void TurnsOnGraphics()
   {
-        GameObject.Find("Canvas/Content").GetComponent<ChooseSongUI.scrolltest>().LeftButtonTrigger();
+        GameObject.Find("SelectMusicManager").GetComponent<ChooseSongUI.scrolltest>().LeftButtonTrigger();
         onGraphics.SetActive(true);
     offGraphics.SetActive(false);
 	midGraphics.SetColor(MidGraphicsOnColor);
@@ -36,7 +36,7 @@ public class ButtonLeftToggle : ButtonToggleBase
 
   private void TurnsOffGraphics()
   {
-        GameObject.Find("Canvas/Content").GetComponent<ChooseSongUI.scrolltest>().LeftButtonTrigger();
+        GameObject.Find("SelectMusicManager").GetComponent<ChooseSongUI.scrolltest>().LeftButtonTrigger();
         onGraphics.SetActive(false);
     offGraphics.SetActive(true);
 	midGraphics.SetColor(MidGraphicsOffColor);

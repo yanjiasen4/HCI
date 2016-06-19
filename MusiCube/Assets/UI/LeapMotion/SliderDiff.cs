@@ -224,7 +224,7 @@ public class SliderDiff : SliderBase
   {
     base.FixedUpdate();
     UpdateGraphics();
-        numberOfDiffs = GameObject.Find("Canvas/Content").GetComponent<ChooseSongUI.scrolltest>().getSongDiffNumber();
+        numberOfDiffs = GameObject.Find("SelectMusicManager").GetComponent<ChooseSongUI.scrolltest>().getSongDiffNumber();
         UpdateDiff();
     }
 }

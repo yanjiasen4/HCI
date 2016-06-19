@@ -20,6 +20,7 @@ namespace MusiCube
         public Color perfectColor;
         public Color goodColor;
         public Color normalColor;
+        public Color failColor;
         public float keyHeight = 0.25f;
         public float lightScaleX = 0.95f;
         public float lightScaleZ = 0.95f;
@@ -278,6 +279,7 @@ namespace MusiCube
                     break;
                 case PlAnimeType.fail:
                     plane.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", null);
+                    plane.GetComponent<MeshRenderer>().material.color = failColor;
                     break;
                 case PlAnimeType.perfect:
                     pressLight.SetActive(true);

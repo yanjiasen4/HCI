@@ -20,6 +20,8 @@ namespace MusiCube
         public Color perfectColor;
         public Color goodColor;
         public Color normalColor;
+        public Color failColor;
+        public Color defaultColor;
         public float keyHeight = 0.25f;
         public float lightScaleX = 0.95f;
         public float lightScaleZ = 0.95f;
@@ -143,8 +145,7 @@ namespace MusiCube
             }
             float height = Mathf.Lerp(keyHeight, 0, time);
             plane.transform.localPosition = new Vector3(0, height, 0);
-
-            //Debug.Log("play fail:"+time);
+            
         }
 
         //缩圈动画
@@ -261,19 +262,21 @@ namespace MusiCube
             }
             plane.transform.localPosition = new Vector3(0, 0, 0);
             plane.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", null);
-                    
+
+            plane.GetComponent<MeshRenderer>().material.color = defaultColor;
             pressLight.SetActive(false);
             switch (nType)
             {
                 case PlAnimeType.raise:
-                    for(int i = 0; i < dropPlanes.Length; i++)
+                    for (int i = 0; i < dropPlanes.Length; i++)
                     {
                         dropPlanes[i].SetActive(true);
                         dropPlanes[i].GetComponent<MeshRenderer>().material.color = themeColor;
-                    }
+                    } 
                     break;
                 case PlAnimeType.fail:
                     plane.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", null);
+                    plane.GetComponent<MeshRenderer>().material.color = failColor;
                     break;
                 case PlAnimeType.perfect:
                     pressLight.SetActive(true);

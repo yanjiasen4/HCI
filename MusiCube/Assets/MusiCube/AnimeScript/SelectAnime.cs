@@ -106,8 +106,6 @@ namespace MusiCube
 
         public void playPlaneRaise(MusiCube.Direction dir, float time)
         {
-            if (feedback)
-                return;
             switch(dir)
             {
                 case Direction.xplus:
@@ -146,6 +144,13 @@ namespace MusiCube
         }
         public void playPlaneRaiseStaticly(MusiCube.Direction dir, float time)
         {
+            if (feedback)
+            {
+                print("feedbacking" + time.ToString());
+                return;
+            }
+            if (time > 1f)
+                time = 1.0f;
             switch (dir)
             {
                 case Direction.xplus:
@@ -173,6 +178,7 @@ namespace MusiCube
 
         public void playPlaneFeedback(Direction dir, PlAnimeType pt, float time)
         {
+            //Debug.Log("Play feedback");
             switch(pt)
             {
                 case PlAnimeType.perfect:

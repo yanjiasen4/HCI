@@ -31,9 +31,9 @@ public class ScoreManager : MonoBehaviour {
         goodText.text = PlayerPrefs.GetInt("goodCount").ToString();
         normalText.text = PlayerPrefs.GetInt("normalCount").ToString();
         missText.text = PlayerPrefs.GetInt("missCount").ToString();
-        comboText.text = PlayerPrefs.GetInt("comboCount").ToString();
-        acc = PlayerPrefs.GetFloat("acc");
-        accText.text = (100 * acc).ToString() + "%";
+        comboText.text = PlayerPrefs.GetInt("maxCombo").ToString();
+        acc = 100 * PlayerPrefs.GetFloat("acc");
+        accText.text = acc.ToString("f2") + "%";
 
         if(acc < 60)
         {

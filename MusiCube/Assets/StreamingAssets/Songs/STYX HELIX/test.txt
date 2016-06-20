@@ -1,4 +1,4 @@
-diffname:Hard
+diffname:Easy
 ar:8
 od:6.5
 bpm:123

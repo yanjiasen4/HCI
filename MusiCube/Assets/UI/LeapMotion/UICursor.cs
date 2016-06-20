@@ -2,14 +2,15 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class UICursor : MonoBehaviour {
 
-    public 
+    public MainManager mm;
 
     // Use this for initialization
     void Start() {
-
+        PlayerPrefs.SetInt("Buttoned", 0);
     }
 
     // Update is called once per frame
@@ -33,13 +34,24 @@ public class UICursor : MonoBehaviour {
         {
             switch (other.gameObject.name)
             {
-                case "Select Song":
+                case "SelectSong":
+                    //PlayerPrefs.SetInt("Buttoned", 0);
+                    mm.switchToScene(MainManager.game);
                     break;
-                case "Edit Song":
+                case "EditSong":
+                    //PlayerPrefs.SetInt("Buttoned", 0);
+                    mm.switchToScene(MainManager.edit);
                     break;
                 case "Exit":
+                    mm.Quit();
                     break;
                 case "Menu":
+                    //PlayerPrefs.SetInt("Buttoned", 0);
+                    SceneManager.LoadScene(0);
+                    break;
+                case "BackToSelectEdit":
+                    //PlayerPrefs.SetInt("Buttoned", 0);
+                    SceneManager.LoadScene(5);
                     break;
                 default:
                     break;

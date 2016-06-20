@@ -22,7 +22,6 @@ public class SliderMap : SliderBase
 	
   private List<GameObject> dots = new List<GameObject>();
 
-    public Transform t;
     public Slider s;
 
   

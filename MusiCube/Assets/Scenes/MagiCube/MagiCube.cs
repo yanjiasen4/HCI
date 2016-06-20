@@ -16,8 +16,6 @@ public class MagiCube : MonoBehaviour
     public GameObject block;
     public GameObject layer;
     public float blockSize = 0.05f;
-    public Material activeMt;
-    public Material inActiveMt;
     public float timeSlice = 0.5f;
     public Face threeFace;
     BlockStatus[,,] squareBlock = new BlockStatus[3, 3, 3];
@@ -69,8 +67,10 @@ public class MagiCube : MonoBehaviour
     public bool isDone = false;
 
     string songName;
-    string songFullPathAndName;
-    string beatmapFullPathAndName;
+    string diffName;
+    string audioName;
+    public string songFullPathAndName;
+    public string beatmapFullPathAndName;
     string blockPath = "MagiCube/";
     public BeatMap bm;
 
@@ -92,11 +92,22 @@ public class MagiCube : MonoBehaviour
         bm = new BeatMap();
 
         // for debug
-        bm.readFromFile("test.txt");
-        songName = "STYX HELIX";
+        //bm.readFromFile("test.txt");
+        //songName = "STYX HELIX";
+
+        songName = PlayerPrefs.GetString("songName");
+        diffName = PlayerPrefs.GetString("diffName");
+        audioName = PlayerPrefs.GetString("audioName");
+        string songPath = "Songs/" + songName + "/" + audioName;
+        string beatmapPath = "Songs/" + songName + "/" + diffName + ".mcb";
+        songFullPathAndName = "file:///" + System.IO.Path.Combine(Application.streamingAssetsPath, songPath);
+        beatmapFullPathAndName = System.IO.Path.Combine(Application.streamingAssetsPath, beatmapPath);
+        bm.readFromFile(beatmapFullPathAndName);
+
         InitialSquare();
         InitialNote();
-        StartCoroutine(LoadMusic());
+
+        StartCoroutine(LoadMusic(songFullPathAndName));
         blockRotate = block.transform.rotation;
         appTime = getAppTime(bm.ar);
         judgeRange = getJudgeRange(bm.od);
@@ -108,15 +119,10 @@ public class MagiCube : MonoBehaviour
     }
 
     // Use WWW to asynchronously load a music resource
-    IEnumerator LoadMusic()
+    IEnumerator LoadMusic(string Path)
     {
-        
-        string songPath = "Songs/" + songName + "/" + songName + ".mp3";
-        string beatmapPath = "Songs/" + songName + "/" + songName + ".mcb";
-        songFullPathAndName = "file:///" + System.IO.Path.Combine(Application.streamingAssetsPath, songPath);
-        beatmapFullPathAndName = System.IO.Path.Combine(Application.streamingAssetsPath, beatmapPath);
        
-        www = new WWW(songFullPathAndName);
+        www = new WWW(Path);
         yield return www;
 
         music.clip = AudioLoader.FromMp3Data(www.bytes, "music");
@@ -174,6 +180,10 @@ public class MagiCube : MonoBehaviour
                     {
                         renderSingleSliderStaticly(sld.nt, sld.start, sld.end, timeMs);
                     }
+                    if (slidersRender.Count == 0)
+                    {
+                        sliderAnimation.SetActive(false);
+                    }
 
                     if (timeMs - judgeRange > timeStamp[noteCount])
                     {
@@ -185,7 +195,7 @@ public class MagiCube : MonoBehaviour
                         }
                     }
 
-                    timeCount += Time.deltaTime > 0.1f ? 0 : Time.deltaTime;
+                    timeCount += Time.deltaTime > 0.1f? 0 : Time.deltaTime;
                     break;
                 }
             // 编辑模式，画面静止
@@ -212,8 +222,12 @@ public class MagiCube : MonoBehaviour
                     {
                         renderSingleSliderStaticly(sld.nt, sld.start, sld.end, timeMs);
                     }
+                    if (slidersRender.Count == 0)
+                    {
+                        sliderAnimation.SetActive(false);
+                    }
 
-                    if(!isPaused)
+                    if (!isPaused)
                     {
                         // timeCount += Time.deltaTime;
                         
@@ -270,8 +284,6 @@ public class MagiCube : MonoBehaviour
                     squareBlock[i, j, k].block = (GameObject)Instantiate(block, squareBlock[i, j, k].originalLocation, blockTrans.rotation);
                     squareBlock[i, j, k].block.transform.parent = transform;
                     squareBlock[i, j, k].block.name = (i * 9 + j * 3 + k).ToString();
-                    squareBlock[i, j, k].activeMt = activeMt;
-                    squareBlock[i, j, k].inActiveMt = inActiveMt;
                     squareBlock[i, j, k].blockSize = blockSize;
                     Block blockScript = squareBlock[i, j, k].block.GetComponent<Block>();
                     if (blockScript)
@@ -564,7 +576,8 @@ public class MagiCube : MonoBehaviour
     {
         if (nt.type != NoteType.Note)
             return;
-        float animationTime = 1f -((float)(noteTime - t)) / appTime;
+        float animationTime = 1 - ((float)(noteTime - t)) / appTime;
+        //print(noteTime.ToString() + "/" + t.ToString() + ": " + animationTime.ToString());
         if (animationTime < 0)
             return;
         GameObject target = GameObject.Find(blockPath + nt.id.ToString());
@@ -591,7 +604,7 @@ public class MagiCube : MonoBehaviour
             Vector3 centerPoint = squareBlock[centerIndex.x, centerIndex.y, centerIndex.z].block.transform.position;
             sliderAnimation.SetActive(true);
             sliderAnimation.transform.position = centerPoint;
-            //sliderAnimation.GetComponent<SliderRotate>().Rotate(dir);
+            sliderAnimation.GetComponent<SliderRotate>().Rotate(dir);
             int startTime = (int)(noteTime - appTime);
             //GameObject sliderAnimation = Instantiate(layer, centerPoint, new Quaternion(rotateDir))
             if (t > noteTime - appTime && t <= noteTime)
@@ -601,7 +614,6 @@ public class MagiCube : MonoBehaviour
             else if (t > noteTime && t < endTime)
             {
                 float pullingPercent = (t - (float)noteTime) / ((float)endTime - noteTime);
-                print(pullingPercent);
                 sliderAnimation.GetComponentInChildren<RowAnime>().playPulling(pullingPercent, pullingPercent, pullingPercent);
                 sliderAnimation.transform.rotation = Quaternion.identity;
                 sliderAnimation.transform.rotation = Quaternion.Euler(pullingPercent * rotateDir * 90f);
@@ -909,7 +921,7 @@ public class MagiCube : MonoBehaviour
     }
     private float getJudgeRange(float od)
     {
-        return 80 - 6 * od;
+        return (80f - 6 * od);
     }
     
     class BlockStatus

@@ -216,6 +216,8 @@ public class SliderDiff : SliderBase
 
             int nowDiff = (int)((transform.localPosition.x-lower_limit)/increments);
 
+            Debug.Log(nowDiff);
+
             PlayerPrefs.SetInt("nowDiff", nowDiff);
         }
     }

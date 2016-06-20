@@ -140,6 +140,7 @@
     <None Include="Assets\Plugins\donotdelete.txt" />
     <None Include="Assets\Plugins\x86\donotdelete.txt" />
     <None Include="Assets\Plugins\x86_64\donotdelete.txt" />
+    <None Include="Assets\StreamingAssets\Songs\STYX HELIX\test.txt" />
     <None Include="Assets\UI\Border 1.shader" />
     <None Include="Assets\UI\Border.shader" />
     <None Include="Assets\UI\Outline.shader" />

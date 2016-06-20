@@ -98,11 +98,9 @@ public class GameManager : MonoBehaviour {
         }
 
         int currTime = (int)(mc.GetTime() * 1000);
-
-        // test
-        if (Input.GetKey(KeyCode.Z))
+        if(currTime >= mc.beatMapLength + 1000f)
         {
-            //print(currTime);
+            switchToScore();
         }
 
         // 在判定范围内
@@ -116,6 +114,7 @@ public class GameManager : MonoBehaviour {
                     ht.status = hitStatus.hitable;
                 }
             }
+            
             if (Input.GetKeyDown(KeyCode.X))
             {
                 int dt = Mathf.Abs(currTime - currentNoteTime);
@@ -142,13 +141,20 @@ public class GameManager : MonoBehaviour {
                     }
                 }
             }
+            
         }
 
         // 按照每个Hit的状态执行
         foreach (Hit ht in currentHits)
         {
             if (ht.status == hitStatus.dead)
-                continue;
+            {
+                if(currTime > ht.noteTime + 10 * mc.judgeRange)
+                {
+                    GameObject blk = mc.getBlockById(ht.nt.id) as GameObject;
+                    blk.GetComponent<SelectAnime>().feedback = false;
+                }
+            }
             // 检测是否有未击打而漏过的note
             if (ht.status == hitStatus.hitable)
             {
@@ -191,8 +197,6 @@ public class GameManager : MonoBehaviour {
                         break;
                 }
                 ht.status = hitStatus.feedbacking;
-                GameObject blk = mc.getBlockById(ht.nt.id) as GameObject;
-                blk.GetComponent<SelectAnime>().feedback = true;
                 ht.anim = pt;
             }
             // 为在feedback阶段的note更新播放动画
@@ -250,9 +254,11 @@ public class GameManager : MonoBehaviour {
             {
                 if (ht.nt.id == xIdx + zIdx * 3 + yIdx * 9)
                 {
+                    GameObject blk = mc.getBlockById(ht.nt.id) as GameObject;
+                    blk.GetComponent<SelectAnime>().feedback = true;
                     int currTime = (int)(mc.GetTime() * 1000);
                     int dt = Mathf.Abs(currTime - currentNoteTime);
-                    print(currentNoteTime + "/" + currTime);
+                    //print(currentNoteTime + "/" + currTime);
                     hitGrade hg = hitGrade.miss;
                     float bouns = getComboBonusPara(combo);
                     if (dt <= mc.judgeRange)
@@ -282,7 +288,7 @@ public class GameManager : MonoBehaviour {
                         missCount++;
                         combo = 0;
                     }
-                    acc = (3 * perfectCount + 2 * goodCount + normalCount) / (3 * (perfectCount + goodCount + normalCount + missCount));
+                    acc = (3 * perfectCount + 2 * goodCount + normalCount) / (3 * ((float)perfectCount + goodCount + normalCount + missCount));
                     maxCombo = combo > maxCombo ? combo : maxCombo; // 更新最大连击数
                     ht.status = hitStatus.hited;
                     ht.hitTime = currTime;

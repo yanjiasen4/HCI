@@ -61,7 +61,7 @@ public class MapMaker : MonoBehaviour {
             bpmInput.gameObject.SetActive(true);
         }
 
-        seekContinuousTrigleTime = 0.2f;
+        seekContinuousTrigleTime = 0.15f / (mc.bm.GetBpm()/100);
         seekMinTime = 40f;
         currDivide = divisorArray[beatSnapDivisor];
         timeSlice = CalculateTimeSlice();
@@ -323,7 +323,14 @@ public class MapMaker : MonoBehaviour {
     public void UserSaveBeatMap()
     {
         // for test
-        mc.bm.writeToFile("test.txt");
+        string filePath = mc.beatmapFullPathAndName;
+        if (filePath != null)
+        {
+            mc.bm.writeToFile(filePath);
+        }
+        else {
+            mc.bm.writeToFile("test.txt");
+        }
     }
 
     void UserSetBpm(float bpm)

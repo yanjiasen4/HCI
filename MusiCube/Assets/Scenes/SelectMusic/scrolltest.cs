@@ -38,6 +38,12 @@ namespace ChooseSongUI
         private List<KeyValuePair<Song, AudioClip>> songAudio;
         private bool isDone = false;
 
+        public GameObject menu;
+        public GameObject progressCircle;
+        public int totalProgress;
+        public int progress;
+        private float progressStep = 25f;
+
         
 
         // read the background picture of the song
@@ -52,7 +58,14 @@ namespace ChooseSongUI
                 //Debug.Log(filePath);
                 //Debug.Log(filePath);
                 WWW www = new WWW(filePath);
-                yield return www;
+                float i = 0;
+                while (i < progressStep)
+                {
+                    i++;
+                    progress++;
+                    progressCircle.GetComponent<Progress>().playCircle((float)progress / totalProgress);
+                    yield return new WaitForEndOfFrame();
+                }
                 songri.texture = www.texture;
             }
         }
@@ -67,7 +80,14 @@ namespace ChooseSongUI
                 Debug.Log(filePath);
                 //Debug.Log(filePath);
                 WWW www = new WWW(filePath);
-                yield return www;
+                float i = 0;
+                while(i < progressStep)
+                {
+                    i++;
+                    progress++;
+                    progressCircle.GetComponent<Progress>().playCircle((float)progress / totalProgress);
+                    yield return new WaitForEndOfFrame();
+                }
 
                 if(www.error != null)
                 {
@@ -86,6 +106,8 @@ namespace ChooseSongUI
                 camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
                 camera.GetComponent<AudioSource>().Play();
             }
+            if(menu != null)
+                menu.SetActive(true);
             isDone = true;
 
         }
@@ -122,8 +144,10 @@ namespace ChooseSongUI
         // Use this for initialization
         void Start()
         {
+            menu.SetActive(false);
             // init the songlist and get it
             sl = SongList.instance.songList;
+            totalProgress = sl.Count * 2 * (int)progressStep;
             //Debug.Log(sl.Count);
             songButton = new List<KeyValuePair<Song, Button>>();
             songAudio = new List<KeyValuePair<Song, AudioClip>>();
@@ -207,9 +231,10 @@ namespace ChooseSongUI
 
             if (last != now)
             {
-                nowDiff = 0;
-                Debug.Log("nowi" + nowi);
-                PlayerPrefs.SetInt("nowDiff", nowDiff);
+                for (int j = 0; j < now.diffCount; j++)
+                    Debug.Log(now.diffs[j].difficultyName);
+                //nowDiff = 0;
+               // PlayerPrefs.SetInt("nowDiff", nowDiff);
                 if (songAudio.Count > nowi)
                 {
                     camera.GetComponent<AudioSource>().clip = songAudio[nowi].Value;
@@ -285,6 +310,15 @@ namespace ChooseSongUI
         public int getSongDiffNumber()
         {
             return now.diffCount; 
+        }
+
+        public Song getNow()
+        {
+            return now;
+        }
+        public int getNowDiff()
+        {
+            return nowDiff;
         }
     }
 }

@@ -40,7 +40,7 @@ public class UIClick : MonoBehaviour {
             {
                 PlayerPrefs.SetInt("Clicked", 0);
                 PlayerPrefs.SetFloat("ClickedTime", 0);
-                Debug.Log(CircleSource.instance.circleSequence.Length);
+                //Debug.Log(CircleSource.instance.circleSequence.Length);
                 img.sprite = CircleSource.instance.circleSequence[0];
             }
 
